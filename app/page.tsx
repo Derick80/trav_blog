@@ -1,4 +1,4 @@
-import ImageCarousel from '@/components/image-carousel';
+import ImageCarousel from '@/components/image-carousel/image-carousel';
 import { getAllImages } from './actions';
 
 async function Home () {
@@ -9,13 +9,14 @@ async function Home () {
 
   });
 
-  console.log(images
-  );
+
 
   return (
         <div
         className="flex relative justify-center min-w-full">
-        <ImageCarousel images={images} />
+      <ImageCarousel images={ images }
+
+      />
           </div>
 
   );

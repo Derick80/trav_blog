@@ -1,12 +1,12 @@
 'use client'
-import { Button } from './ui/button'
+import { Button } from '../ui/button'
 import { ArrowBigLeft, ArrowBigRight, MapPin } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './ui/card'
-import { editDescription, editTitle } from '@/app/actions'
-import {  Muted, Small } from './ui/typography'
-import EditableTextField from './editable-text'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card'
+import {  Caption, Muted, Small } from '../ui/typography'
+import EditableTextField from '../editable-text'
+import { editTitle, editDescription } from '@/app/actions'
 
 
 const ImageCarousel = ({ images }: {
@@ -39,7 +39,9 @@ const ImageCarousel = ({ images }: {
 
             <CardHeader>
                 <CardTitle>
-                    <EditableTextField initialValue={ currentImage.title }
+                    <EditableTextField
+                            key={currentImage.id}
+                        initialValue={ currentImage.title }
                         onUpdate={ (value) => {
                             editTitle({ id: currentImage.id, title: value });
 
@@ -76,9 +78,9 @@ const ImageCarousel = ({ images }: {
                         { currentImage.city }
                         <MapPin className='h-4 w-4 inline-block ml-1' />
                     </Small>
-                {/* <Caption>
+                <Caption>
                    { currentImage.id}
-                </Caption> */}
+                </Caption>
                     </div>
 
                </CardContent>
