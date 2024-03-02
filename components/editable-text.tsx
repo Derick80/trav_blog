@@ -3,7 +3,8 @@ import { Input } from './ui/input';
 
 type EditableTextFieldProps = {
     initialValue?: string;
-    onUpdate?: (value: string) => void;
+  onUpdate?: (value: string) => void;
+
 };
 
 const EditableTextField = ({ initialValue,onUpdate }: EditableTextFieldProps) => {
@@ -17,7 +18,8 @@ const EditableTextField = ({ initialValue,onUpdate }: EditableTextFieldProps) =>
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
         setIsEditing(false);
-              onUpdate && value && onUpdate(value); // Call the onUpdate function if it exists
+      onUpdate && value && onUpdate(value);
+      setValue(value)// Call the onUpdate function if it exists
 
     }
   };

@@ -5,7 +5,19 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from
   import Image from 'next/image'
 import { Button } from '@/components/ui/button';
 import { ArrowBigLeft } from 'lucide-react';
-import ImageCarousel from '@/components/image-carousel/image-carousel';
+import ImageCarousel from '@/components/image-carousel/edit-image-carousel';
+import Link from 'next/link';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+
+
 
 async function Home ({ searchParams }: {
   searchParams: {
@@ -13,12 +25,12 @@ async function Home ({ searchParams }: {
   }
 }) {
 
-  const pages = typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1;
+  const page = typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1;
   const limit = typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10;
 
 
-  const images = await getAllImages({
-    page: pages,
+  const {images,totalImages} = await getAllImages({
+    page: page,
     limit: limit
 
   });
@@ -26,18 +38,47 @@ async function Home ({ searchParams }: {
     return <div>No images found</div>;
   }
 
+  // Calculate total number of pages
+  const totalPages = Math.ceil(totalImages / limit);
+
+  // Generate pagination links
+  const paginationLinks = [];
+    const visiblePages = 3; // Number of visible pages
+  const startPage = Math.max(1, page - Math.floor(visiblePages / 2));
+  const endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+  for (let i = startPage; i <= endPage; i++) {
+    paginationLinks.push(
+      <PaginationLink
+        key={i}
+        href={`/?page=${i}&limit=${limit}`}
+        isActive={i === page}
+      >
+        {i}
+      </PaginationLink>
+    );
+  }
+
+
 
 
   return (
 
     <>
       <ImageCarousel
-        imageArray={images}
-
+        images={ images }
+        totalImages={ totalImages }
+        searchParams={ searchParams }
+        startPage={ startPage }
+        endPage={ endPage }
       />
+       <div>
+
+      </div>
     </>
 
   );
 }
 
 export default Home;
+

@@ -12,7 +12,8 @@ export async function getAllImages({
   page: number
   limit: number
 }) {
-  return await prisma.photos.findMany({
+  const totalImages = await prisma.photos.count()
+  const images = await prisma.photos.findMany({
     select: {
       id: true,
       imageUrl: true,
@@ -21,12 +22,14 @@ export async function getAllImages({
       city: true,
       userId: true
     },
+
     orderBy: {
       createdAt: 'desc'
     },
     skip: (page - 1) * limit,
     take: limit
   })
+  return { images, totalImages }
 }
 
 export async function editTitle({ id, title }: { id: string; title: string }) {

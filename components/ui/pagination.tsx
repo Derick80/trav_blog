@@ -1,5 +1,6 @@
 import * as React from "react"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
+import Link from 'next/link'
 
 import { cn } from "@/lib/utils"
 import { ButtonProps, buttonVariants } from "@/components/ui/button"
@@ -37,7 +38,7 @@ PaginationItem.displayName = "PaginationItem"
 type PaginationLinkProps = {
   isActive?: boolean
 } & Pick<ButtonProps, "size"> &
-  React.ComponentProps<"a">
+  React.ComponentProps<typeof Link>
 
 const PaginationLink = ({
   className,
@@ -45,17 +46,19 @@ const PaginationLink = ({
   size = "icon",
   ...props
 }: PaginationLinkProps) => (
-  <a
-    aria-current={isActive ? "page" : undefined}
-    className={cn(
-      buttonVariants({
-        variant: isActive ? "outline" : "ghost",
-        size,
-      }),
-      className
-    )}
-    {...props}
-  />
+  <PaginationItem>
+    <Link
+      aria-current={isActive ? "page" : undefined}
+      className={cn(
+        buttonVariants({
+          variant: isActive ? "outline" : "ghost",
+          size,
+        }),
+        className
+      )}
+      {...props}
+    />
+  </PaginationItem>
 )
 PaginationLink.displayName = "PaginationLink"
 
@@ -106,6 +109,41 @@ const PaginationEllipsis = ({
 )
 PaginationEllipsis.displayName = "PaginationEllipsis"
 
+type PaginatorProps = {
+  currentPage: number;
+  totalPages: number;
+  visiblePages: number;
+}
+
+const Paginator = ({ currentPage, totalPages, visiblePages }: PaginatorProps) => {
+  const pagesToShow = Math.min(totalPages, visiblePages);
+  const halfVisible = Math.floor(visiblePages / 2);
+
+  const startPage = Math.max(1, currentPage - halfVisible);
+  const endPage = Math.min(totalPages, startPage + visiblePages - 1);
+
+  const paginationLinks = [];
+  for (let i = startPage; i <= endPage; i++) {
+    paginationLinks.push(
+      <PaginationLink
+        key={i}
+        href={`/?page=${i}`}
+        isActive={i === currentPage}
+      >
+        {i}
+      </PaginationLink>
+    );
+  }
+
+  return (
+    <>
+      {startPage > 1 && <PaginationEllipsis />}
+      {paginationLinks}
+      {endPage < totalPages && <PaginationEllipsis />}
+    </>
+  );
+}
+
 export {
   Pagination,
   PaginationContent,
@@ -114,4 +152,5 @@ export {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  Paginator,
 }
