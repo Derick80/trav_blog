@@ -16,6 +16,7 @@ export async function getAllImages({
   const images = await prisma.photos.findMany({
     select: {
       id: true,
+      cloudinaryPublicId: true,
       imageUrl: true,
       title: true,
       description: true,

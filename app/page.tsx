@@ -46,6 +46,7 @@ async function Home ({ searchParams }: {
     const visiblePages = 3; // Number of visible pages
   const startPage = Math.max(1, page - Math.floor(visiblePages / 2));
   const endPage = Math.min(totalPages, startPage + visiblePages - 1);
+  console.log(endPage,'endPage');
 
   for (let i = startPage; i <= endPage; i++) {
     paginationLinks.push(
