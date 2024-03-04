@@ -57,6 +57,7 @@ const ImageCarousel = ({
   const page =
     typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
   const [currentIndex, setCurrentIndex] = React.useState(0)
+console.log(currentIndex, 'currentIndex');
 
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) =>
@@ -80,6 +81,9 @@ const ImageCarousel = ({
   const hasPrevious = currentIndex > 0
 console.log(hasPrevious, 'hasPrevious');
 
+  // React.useEffect(() => {
+  //   setCurrentIndex(0); // Reset currentIndex when page changes
+  // }, [page]);
 
   const isLastPage = page === endPage
   console.log(isLastPage, 'isLastPage');
@@ -208,8 +212,8 @@ console.log(hasPrevious, 'hasPrevious');
             ) : (
               <PaginationNext
                 href={`/?page=${page + 1}&limit=${limit}`}
-                onClick={goToNext}
                 prefetch={ true }
+                onClick={goToNext}
                 disabled={isLastPage}
               >
 

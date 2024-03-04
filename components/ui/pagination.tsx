@@ -79,7 +79,8 @@ const PaginationPrevious = ({
     {...props}
   >
     <Button className='z-10 ml-4'
-      disabled={disabled}
+      disabled={ disabled }
+
     >
       <ChevronLeft className="h-8 w-8" />
     </Button>
