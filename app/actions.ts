@@ -26,7 +26,12 @@ export async function getAllImages({
       title: true,
       description: true,
       city: true,
-      userId: true
+      userId: true,
+      user: {
+        select: {
+          role: true
+        }
+      }
     },
 
     orderBy: {

@@ -43,6 +43,9 @@ const ImageCarousel = ({
     description: string
     city: string
     userId: string
+    user: {
+      role: string
+    }
   }[]
   totalImages: number
   searchParams: {
@@ -53,7 +56,12 @@ const ImageCarousel = ({
   }) => {
 
   const { userId } = useAuth();
-  const isOwner = userId === images[0].userId
+  const roles = new Set(images.map((image) => image.user.role))
+
+
+   const isOwner = userId === images[0].userId
+  const isAdmin =  roles.has('admin')
+
   const limit =
     typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
   const page =
@@ -113,7 +121,7 @@ const ImageCarousel = ({
       <CardHeader>
         <CardTitle>
           {
-            isOwner ? (
+            isOwner || isAdmin ? (
                <EditableTextField
             initialValue={currentImage.title}
             onUpdate={(value) => {
