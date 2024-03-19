@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import prisma from '../lib/prisma'
 
 export async function clog(text: string) {
@@ -34,7 +35,7 @@ export async function getAllImages({
 }
 
 export async function editTitle({ id, title }: { id: string; title: string }) {
-  return await prisma.photos.update({
+  const updated = await prisma.photos.update({
     where: {
       id
     },
@@ -42,6 +43,10 @@ export async function editTitle({ id, title }: { id: string; title: string }) {
       title
     }
   })
+  if (updated) {
+    revalidatePath('/posts')
+    return updated
+  }
 }
 
 export async function editDescription({
@@ -51,7 +56,7 @@ export async function editDescription({
   id: string
   description: string
 }) {
-  return await prisma.photos.update({
+  const updated = await prisma.photos.update({
     where: {
       id
     },
@@ -59,4 +64,8 @@ export async function editDescription({
       description
     }
   })
+  if (updated) {
+    revalidatePath('/posts')
+    return updated
+  }
 }

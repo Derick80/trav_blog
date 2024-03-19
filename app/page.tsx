@@ -65,18 +65,13 @@ async function Home ({ searchParams }: {
 
   return (
 
-    <>
-      <ImageCarousel
-        images={ images }
-        totalImages={ totalImages }
-        searchParams={ searchParams }
-        startPage={ startPage }
-        endPage={ endPage }
-      />
-       <div>
 
+          <div className="relative">
+
+      <ImageCarousel images={images} totalImages={totalImages} searchParams={searchParams} startPage={startPage} endPage={endPage} />
       </div>
-    </>
+
+
 
   );
 }

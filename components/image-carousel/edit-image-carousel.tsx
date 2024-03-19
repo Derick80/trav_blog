@@ -2,8 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 import { Button } from '../ui/button'
-import { ArrowBigLeft, ArrowBigRight, ChevronLeft, ChevronRight, MapPin } from 'lucide-react'
-import Image from 'next/image'
+import { ChevronLeft, ChevronRight, MapPin, PencilIcon } from 'lucide-react'
 import React from 'react'
 import {
   Card,
@@ -12,7 +11,7 @@ import {
   CardHeader,
   CardTitle
 } from '../ui/card'
-import { Caption, H3, Muted, Small } from '../ui/typography'
+import { Muted, Small } from '../ui/typography'
 import EditableTextField from '../editable-text'
 import { editTitle, editDescription } from '@/app/actions'
 import {
@@ -24,8 +23,8 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/components/ui/pagination'
-import { AspectRatio } from '../ui/aspect-ratio'
 import { getImageBuilder, getImgProps } from './images'
+import Link from 'next/link'
 
 const ImageCarousel = ({
   images,
@@ -57,21 +56,28 @@ const ImageCarousel = ({
   const page =
     typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
   const [currentIndex, setCurrentIndex] = React.useState(0)
-console.log(currentIndex, 'currentIndex');
+    const [currentImage, setCurrentImage] = React.useState(images[0]);
+  React.useEffect(() => {
+    setCurrentImage(images[currentIndex]);
+  }, [currentIndex, images]);
+
+ React.useEffect(() => {
+    // Reset currentIndex when page changes
+    setCurrentIndex(0);
+ }, [page]);
 
   const goToPrevious = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex > 0 ? prevIndex - 1 : images.length - 1
-    )
-  }
-  console.log(page, 'page');
+    setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : images.length - 1));
+  };
+
+
 
   const goToNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
+
   }
 
   const isFirstPage = page === 1
-  console.log(isFirstPage, 'isFirstPage');
   //determine if there is a next image to display
 
   const hasNext = currentIndex < images.length - 1
@@ -79,19 +85,12 @@ console.log(currentIndex, 'currentIndex');
   //determine if there is a previous image to display
 
   const hasPrevious = currentIndex > 0
-console.log(hasPrevious, 'hasPrevious');
-
-  // React.useEffect(() => {
-  //   setCurrentIndex(0); // Reset currentIndex when page changes
-  // }, [page]);
 
   const isLastPage = page === endPage
-  console.log(isLastPage, 'isLastPage');
-  console.log(hasNext, 'hasNext');
 
 
-  // Correctly determine the current image to display
-  const currentImage = images[currentIndex]
+
+
   const paginationLinks = []
 
   for (let i = startPage; i <= endPage; i++) {
@@ -111,11 +110,10 @@ console.log(hasPrevious, 'hasPrevious');
       <CardHeader>
         <CardTitle>
           <EditableTextField
-            key={currentImage.id}
             initialValue={currentImage.title}
             onUpdate={(value) => {
               editTitle({ id: currentImage.id, title: value })
-            }}
+            } }
           />
         </CardTitle>
       </CardHeader>
@@ -153,6 +151,7 @@ console.log(hasPrevious, 'hasPrevious');
               initialValue={currentImage.description}
               onUpdate={(value) => {
                 editDescription({ id: currentImage.id, description: value })
+
               }}
             />
           </Muted>
@@ -160,7 +159,6 @@ console.log(hasPrevious, 'hasPrevious');
             {currentImage.city}
             <MapPin className='h-4 w-4 inline-block ml-1' />
           </Small>
-          <Caption>{currentImage.id}</Caption>
         </div>
       </CardContent>
 
@@ -226,7 +224,13 @@ console.log(hasPrevious, 'hasPrevious');
           </PaginationContent>
       </Pagination>
             <CardFooter className='flex flex-col justify-between items-center w-full'>
-
+        <Button asChild>
+          <Link
+            href={ `/edit/${currentImage.id}` }
+          >
+            <PencilIcon className='h-8 w-8' />
+          </Link>
+              </Button>
       </CardFooter>
     </Card>
   )

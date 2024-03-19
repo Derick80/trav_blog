@@ -4,22 +4,31 @@ import { Input } from './ui/input';
 type EditableTextFieldProps = {
     initialValue?: string;
   onUpdate?: (value: string) => void;
+  updateInitialValue?: (value: string) => void;
 
 };
 
-const EditableTextField = ({ initialValue,onUpdate }: EditableTextFieldProps) => {
+const EditableTextField = ({ initialValue,onUpdate,updateInitialValue }: EditableTextFieldProps) => {
   const [value, setValue] = React.useState(initialValue);
   const [isEditing, setIsEditing] = React.useState(false);
 
+  React.useEffect(() => {
+    setValue(initialValue);
+  }
+    , [initialValue]);
+
+
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
+    updateInitialValue && updateInitialValue(event.target.value);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
         setIsEditing(false);
       onUpdate && value && onUpdate(value);
-      setValue(value)// Call the onUpdate function if it exists
+      setValue(event.currentTarget.value)// Call the onUpdate function if it exists
 
     }
   };
@@ -33,17 +42,18 @@ const EditableTextField = ({ initialValue,onUpdate }: EditableTextFieldProps) =>
       {isEditing ? (
         <Input
           type="text"
+          defaultValue={initialValue}
           value={value}
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}
           onBlur={() => setIsEditing(false)}
           autoFocus
-          className="border-b border-gray-500 focus:border-blue-500 w-full"
+          className="border-b h-20 border-gray-500 focus:border-blue-500 w-full"
         />
       ) : (
         <div
           onClick={handleDoubleClick}
-          className="cursor-text border-b border-gray-500 focus:border-blue-500 w-full"
+          className="cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20"
         >
           {value ? value : 'Double click to edit'}
         </div>
