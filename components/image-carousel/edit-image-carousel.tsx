@@ -170,13 +170,24 @@ const ImageCarousel = ({
 
         <div className='flex flex-col space-y-2'>
           <Muted className='italic mt-2 indent-2'>
-            <EditableTextField
-              initialValue={currentImage.description}
-              onUpdate={(value) => {
-                editDescription({ id: currentImage.id, description: value })
-
-              }}
-            />
+            {
+            isOwner || isAdmin ? (
+               <EditableTextField
+            initialValue={currentImage.description}
+            onUpdate={(value) => {
+              editDescription({ id: currentImage.id, description: value })
+            } }
+              />
+            ) : (
+              <div
+                  className='flex'>
+                  <div
+                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
+                    { currentImage.description }
+                    </div>
+                </div>
+            )
+         }
           </Muted>
           <Small className='text-right'>
             {currentImage.city}
