@@ -13,14 +13,26 @@ datasource db {
 model User {
   id                String              @id @unique @default(uuid())
   email             String              @unique
-  userName          String?             @unique
+  userName          String              @unique
+  role              String              @default("user")
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @default(now())
-  password          String
+  password          String?
   photos            Photos[]
+  userImages        UserImages[]
   sessions          Session[]
   VerificationToken VerificationToken[]
   accounts          Account[]
+}
+
+model UserImages {
+  id                 String   @id @unique @default(uuid())
+  cloudinaryPublicId String?  @unique
+  imageUrl           String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId             String
 }
 
 model Account {

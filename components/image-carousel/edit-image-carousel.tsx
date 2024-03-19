@@ -26,6 +26,7 @@ import {
 import { getImageBuilder, getImgProps } from './images'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import { useAuth } from "@clerk/nextjs";
 
 const ImageCarousel = ({
   images,
@@ -51,7 +52,8 @@ const ImageCarousel = ({
   endPage: number
   }) => {
 
-
+  const { userId } = useAuth();
+  const isOwner = userId === images[0].userId
   const limit =
     typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
   const page =
@@ -110,12 +112,24 @@ const ImageCarousel = ({
     <Card>
       <CardHeader>
         <CardTitle>
-          <EditableTextField
+          {
+            isOwner ? (
+               <EditableTextField
             initialValue={currentImage.title}
             onUpdate={(value) => {
               editTitle({ id: currentImage.id, title: value })
             } }
-          />
+              />
+            ) : (
+              <div
+                  className='flex'>
+                  <div
+                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
+                    { currentImage.title }
+                    </div>
+                </div>
+            )
+         }
         </CardTitle>
       </CardHeader>
       <CardContent className='relative'>

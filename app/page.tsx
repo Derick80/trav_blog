@@ -14,8 +14,7 @@ async function Home ({ searchParams }: {
     [key: string]: string | string[] | undefined;
   }
 }) {
-  const me = await whoAmI()
-  console.log(me, 'me');
+
   const page = typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1;
   const limit = typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10;
 

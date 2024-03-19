@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { UserButton } from "@clerk/nextjs";
+import { useAuth, UserButton } from "@clerk/nextjs";
 
 const ACTIVE_ROUTE = "py-1 px-2 text-gray-300 bg-gray-700";
 const INACTIVE_ROUTE =
@@ -11,10 +11,40 @@ const INACTIVE_ROUTE =
 
 export default function NavMenu() {
   const pathname = usePathname();
+    const { userId } = useAuth();
+
   return (
            <nav className="flex items-center justify-between p-4    border-b">
 
-<UserButton />
+      <ul
+        className='flex flex-col space-x-4'
+      >
+        <li>
+          <UserButton />
+        </li>
+        {
+          !userId && (
+             <><Link
+              href='/sign-in'
+            >
+              <li
+                className={ pathname === "/sign-in" ? ACTIVE_ROUTE : INACTIVE_ROUTE }
+              >
+                Sign In
+              </li>
+            </Link><Link
+              href='/sign-up'
+            >
+                <li
+                  className={ pathname === "/sign-up" ? ACTIVE_ROUTE : INACTIVE_ROUTE }
+                >
+                  Sign up
+                </li>
+              </Link></>
+          )
+       }
+      </ul>
+
           <ul
           className='flex space-x-4'
           >
