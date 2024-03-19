@@ -9,7 +9,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --check --ignore-path .gitignore ."
   },
   "dependencies": {
     "@cld-apis/types": "^0.1.6",
