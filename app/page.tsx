@@ -1,21 +1,11 @@
-import { getAllImages } from './actions';
+import { getAllImages, whoAmI } from './actions';
 import React from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from
-  '@/components/ui/card'
-  import Image from 'next/image'
-import { Button } from '@/components/ui/button';
-import { ArrowBigLeft } from 'lucide-react';
 import ImageCarousel from '@/components/image-carousel/edit-image-carousel';
-import Link from 'next/link';
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
   PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
 } from "@/components/ui/pagination"
+import { getServerSession } from 'next-auth';
+import { H3, Small } from '@/components/ui/typography';
 
 
 
@@ -42,36 +32,32 @@ async function Home ({ searchParams }: {
   const totalPages = Math.ceil(totalImages / limit);
 
   // Generate pagination links
-  const paginationLinks = [];
     const visiblePages = 3; // Number of visible pages
   const startPage = Math.max(1, page - Math.floor(visiblePages / 2));
   const endPage = Math.min(totalPages, startPage + visiblePages - 1);
-  console.log(endPage,'endPage');
 
-  for (let i = startPage; i <= endPage; i++) {
-    paginationLinks.push(
-      <PaginationLink
-        key={i}
-        href={`/?page=${i}&limit=${limit}`}
-        isActive={i === page}
-      >
-        {i}
-      </PaginationLink>
-    );
-  }
 
 
 
 
   return (
 
+    <div
+    className='flex flex-col min-h-screen gap-5 py-2'
+    >
 
+      {/* { me && <div className="absolute top-0 right-0 p-4 bg-white z-10">Welcome {me}</div>
+      } */}
+      <div className="flex flex-col ">
+        <H3>Progress Notes</H3>
+        <Small>View and edit your progress notes</Small>
+        </div>
           <div className="relative">
-
       <ImageCarousel images={images} totalImages={totalImages} searchParams={searchParams} startPage={startPage} endPage={endPage} />
       </div>
 
 
+    </div>
 
   );
 }

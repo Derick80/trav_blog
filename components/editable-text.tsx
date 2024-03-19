@@ -42,7 +42,6 @@ const EditableTextField = ({ initialValue,onUpdate,updateInitialValue }: Editabl
       {isEditing ? (
         <Input
           type="text"
-          defaultValue={initialValue}
           value={value}
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}

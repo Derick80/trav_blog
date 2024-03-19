@@ -2,6 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import prisma from '../lib/prisma'
+import { getServerSession } from 'next-auth'
+import { cookies } from 'next/headers'
+import { auth, currentUser, redirectToSignIn } from '@clerk/nextjs'
+import { redirect } from 'next/navigation'
 
 export async function clog(text: string) {
   console.log(text)
@@ -22,7 +26,12 @@ export async function getAllImages({
       title: true,
       description: true,
       city: true,
-      userId: true
+      userId: true,
+      user: {
+        select: {
+          role: true
+        }
+      }
     },
 
     orderBy: {
@@ -35,6 +44,12 @@ export async function getAllImages({
 }
 
 export async function editTitle({ id, title }: { id: string; title: string }) {
+  const { userId } = auth()
+
+  if (!userId) {
+    return redirect('/api/auth/signin')
+  }
+
   const updated = await prisma.photos.update({
     where: {
       id
@@ -68,4 +83,82 @@ export async function editDescription({
     revalidatePath('/posts')
     return updated
   }
+}
+
+export const editCity = async ({ id, city }: { id: string; city: string }) => {
+  const updated = await prisma.photos.update({
+    where: {
+      id
+    },
+    data: {
+      city
+    }
+  })
+  if (updated) {
+    revalidatePath('/posts')
+    return updated
+  }
+}
+
+export const getInitUser = async () => {
+  const user = await currentUser()
+  console.log(user, 'initUser')
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: '/sign-in',
+        permanent: false
+      }
+    }
+  }
+
+  const userProfile = await prisma.user.findUnique({
+    where: {
+      id: user.id
+    }
+  })
+  if (userProfile) {
+    return userProfile
+  }
+
+  const newUser: {
+    id: string
+    email: string
+    userName: string
+    role: string
+    userImages: {
+      id: string
+      imageUrl: string
+    }[]
+  } = await prisma.user.create({
+    data: {
+      id: user.id,
+      email: user.emailAddresses[0].emailAddress,
+      userName: user.username ?? user.firstName ?? '',
+      role: 'user',
+      userImages: {
+        create: {
+          id: user.id,
+          imageUrl: user.imageUrl ?? ''
+        }
+      }
+    },
+    select: {
+      id: true,
+      email: true,
+      userName: true,
+      role: true,
+      userImages: {
+        select: {
+          id: true,
+          imageUrl: true
+        }
+      }
+    }
+  })
+
+  if (newUser) redirect('/')
+
+  throw new Error('User not found')
 }

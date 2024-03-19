@@ -13,7 +13,7 @@ import {
 } from '../ui/card'
 import { Muted, Small } from '../ui/typography'
 import EditableTextField from '../editable-text'
-import { editTitle, editDescription } from '@/app/actions'
+import { editTitle, editDescription, editCity, } from '@/app/actions'
 import {
   Pagination,
   PaginationContent,
@@ -25,6 +25,8 @@ import {
 } from '@/components/ui/pagination'
 import { getImageBuilder, getImgProps } from './images'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
+import { useAuth } from "@clerk/nextjs";
 
 const ImageCarousel = ({
   images,
@@ -41,6 +43,9 @@ const ImageCarousel = ({
     description: string
     city: string
     userId: string
+    user: {
+      role: string
+    }
   }[]
   totalImages: number
   searchParams: {
@@ -50,21 +55,24 @@ const ImageCarousel = ({
   endPage: number
   }) => {
 
+  const { userId } = useAuth();
+  const roles = new Set(images.map((image) => image.user.role))
+
+
+   const isOwner = userId === images[0].userId
+  const isAdmin =  roles.has('admin')
 
   const limit =
     typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
   const page =
     typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
   const [currentIndex, setCurrentIndex] = React.useState(0)
+  console.log(currentIndex,'currentIndex');
+
     const [currentImage, setCurrentImage] = React.useState(images[0]);
   React.useEffect(() => {
     setCurrentImage(images[currentIndex]);
   }, [currentIndex, images]);
-
- React.useEffect(() => {
-    // Reset currentIndex when page changes
-    setCurrentIndex(0);
- }, [page]);
 
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : images.length - 1));
@@ -109,12 +117,24 @@ const ImageCarousel = ({
     <Card>
       <CardHeader>
         <CardTitle>
-          <EditableTextField
+          {
+            isOwner || isAdmin ? (
+               <EditableTextField
             initialValue={currentImage.title}
             onUpdate={(value) => {
               editTitle({ id: currentImage.id, title: value })
             } }
-          />
+              />
+            ) : (
+              <div
+                  className='flex'>
+                  <div
+                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
+                    { currentImage.title }
+                    </div>
+                </div>
+            )
+         }
         </CardTitle>
       </CardHeader>
       <CardContent className='relative'>
@@ -147,16 +167,44 @@ const ImageCarousel = ({
 
         <div className='flex flex-col space-y-2'>
           <Muted className='italic mt-2 indent-2'>
-            <EditableTextField
-              initialValue={currentImage.description}
-              onUpdate={(value) => {
-                editDescription({ id: currentImage.id, description: value })
-
-              }}
-            />
+            {
+            isOwner || isAdmin ? (
+               <EditableTextField
+            initialValue={currentImage.description}
+            onUpdate={(value) => {
+              editDescription({ id: currentImage.id, description: value })
+            } }
+              />
+            ) : (
+              <div
+                  className='flex'>
+                  <div
+                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
+                    { currentImage.description }
+                    </div>
+                </div>
+            )
+         }
           </Muted>
           <Small className='text-right'>
-            {currentImage.city}
+            {
+            isOwner || isAdmin ? (
+               <EditableTextField
+            initialValue={currentImage.city}
+            onUpdate={(value) => {
+              editCity({ id: currentImage.id, city: value })
+            } }
+              />
+            ) : (
+              <div
+                  className='flex'>
+                  <div
+                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
+                    { currentImage.description }
+                    </div>
+                </div>
+            )
+         }
             <MapPin className='h-4 w-4 inline-block ml-1' />
           </Small>
         </div>
