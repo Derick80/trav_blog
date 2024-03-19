@@ -69,3 +69,21 @@ export async function editDescription({
     return updated
   }
 }
+
+export async function signInUser({
+  email,
+  password
+}: {
+  email: string
+  password: string
+}) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email
+    }
+  })
+  if (user) {
+    return user
+  }
+  return null
+}
