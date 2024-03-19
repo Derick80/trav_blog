@@ -2,6 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import prisma from '../lib/prisma'
+import { getServerSession } from 'next-auth'
+import { cookies } from 'next/headers'
+import { auth } from '@clerk/nextjs'
+import { redirect } from 'next/navigation'
 
 export async function clog(text: string) {
   console.log(text)
@@ -35,6 +39,12 @@ export async function getAllImages({
 }
 
 export async function editTitle({ id, title }: { id: string; title: string }) {
+  const { userId } = auth()
+
+  if (!userId) {
+    return redirect('/api/auth/signin')
+  }
+
   const updated = await prisma.photos.update({
     where: {
       id
@@ -70,20 +80,7 @@ export async function editDescription({
   }
 }
 
-export async function signInUser({
-  email,
-  password
-}: {
-  email: string
-  password: string
-}) {
-  const user = await prisma.user.findUnique({
-    where: {
-      email
-    }
-  })
-  if (user) {
-    return user
-  }
-  return null
+export async function whoAmI() {
+  const session = await getServerSession()
+  return session?.user?.name || 'Not signed in'
 }

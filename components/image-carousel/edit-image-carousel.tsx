@@ -13,7 +13,7 @@ import {
 } from '../ui/card'
 import { Muted, Small } from '../ui/typography'
 import EditableTextField from '../editable-text'
-import { editTitle, editDescription } from '@/app/actions'
+import { editTitle, editDescription, } from '@/app/actions'
 import {
   Pagination,
   PaginationContent,
@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/pagination'
 import { getImageBuilder, getImgProps } from './images'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 const ImageCarousel = ({
   images,
