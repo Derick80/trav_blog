@@ -13,7 +13,7 @@ import {
 } from '../ui/card'
 import { Muted, Small } from '../ui/typography'
 import EditableTextField from '../editable-text'
-import { editTitle, editDescription, } from '@/app/actions'
+import { editTitle, editDescription, editCity, } from '@/app/actions'
 import {
   Pagination,
   PaginationContent,
@@ -67,15 +67,12 @@ const ImageCarousel = ({
   const page =
     typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
   const [currentIndex, setCurrentIndex] = React.useState(0)
+  console.log(currentIndex,'currentIndex');
+
     const [currentImage, setCurrentImage] = React.useState(images[0]);
   React.useEffect(() => {
     setCurrentImage(images[currentIndex]);
   }, [currentIndex, images]);
-
- React.useEffect(() => {
-    // Reset currentIndex when page changes
-    setCurrentIndex(0);
- }, [page]);
 
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : images.length - 1));
@@ -190,7 +187,24 @@ const ImageCarousel = ({
          }
           </Muted>
           <Small className='text-right'>
-            {currentImage.city}
+            {
+            isOwner || isAdmin ? (
+               <EditableTextField
+            initialValue={currentImage.city}
+            onUpdate={(value) => {
+              editCity({ id: currentImage.id, city: value })
+            } }
+              />
+            ) : (
+              <div
+                  className='flex'>
+                  <div
+                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
+                    { currentImage.description }
+                    </div>
+                </div>
+            )
+         }
             <MapPin className='h-4 w-4 inline-block ml-1' />
           </Small>
         </div>
