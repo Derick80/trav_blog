@@ -31,7 +31,8 @@ const ImageCarousel = ({
   totalImages,
   searchParams,
   startPage,
-  endPage
+  endPage,
+  isAdmin
 }: {
   images: {
     id: string
@@ -50,20 +51,20 @@ const ImageCarousel = ({
     [key: string]: string | string[] | undefined
   }
   startPage: number
-  endPage: number
+    endPage: number
+    isAdmin: boolean
 }) => {
   const { userId } = useAuth()
-  const roles = new Set(images.map((image) => image.user.role))
 
   const isOwner = userId === images[0].userId
-  const isAdmin = roles.has('admin')
+
+  console.log(isOwner, isAdmin, 'isOwner, isAdmin');
 
   const limit =
     typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
   const page =
     typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
   const [currentIndex, setCurrentIndex] = React.useState(0)
-  console.log(currentIndex, 'currentIndex')
 
   const [currentImage, setCurrentImage] = React.useState(images[0])
   React.useEffect(() => {
@@ -188,7 +189,7 @@ const ImageCarousel = ({
           ) : (
             <div className="flex w-full">
               <div className="h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500">
-                {currentImage.description}
+                {currentImage.city}
               </div>
             </div>
           )}
@@ -212,7 +213,9 @@ const ImageCarousel = ({
           {hasPrevious ? (
             <PaginationPrevious
               href="#"
-              onClick={goToPrevious}
+              onClick={ goToPrevious }
+                              scroll={false}
+
               disabled={isFirstImage}
               className={cn(
                 isFirstImage ? 'bg-primary-foreground opacity-30' : '',
@@ -222,9 +225,11 @@ const ImageCarousel = ({
           ) : (
             <PaginationPrevious
               href={`/?page=${page - 1}&limit=${limit}`}
-              onClick={goToPrevious}
+                onClick={ goToPrevious }
+                scroll={false}
               prefetch={true}
-              disabled={isFirstPage}
+                disabled={ isFirstPage }
+
               className={cn(
                 isFirstPage ? 'bg-primary-foreground opacity-30' : '',
                 'h-9 w-9 p-0'
@@ -244,7 +249,9 @@ const ImageCarousel = ({
           {hasNext ? (
             <PaginationNext
               href="#"
-              onClick={goToNext}
+              onClick={ goToNext }
+                              scroll={false}
+
               disabled={isLastImage}
               className={cn(
                 isLastImage ? 'bg-primary-foreground opacity-30' : '',
@@ -254,7 +261,9 @@ const ImageCarousel = ({
           ) : (
             <PaginationNext
               href={`/?page=${page + 1}&limit=${limit}`}
-              prefetch={true}
+                prefetch={ true }
+                                scroll={false}
+
               onClick={goToNext}
               disabled={isLastPage}
               className={cn(

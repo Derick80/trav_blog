@@ -35,7 +35,8 @@ async function seed() {
       data: {
         userId: userId,
         imageUrl: image.imageUrl,
-        cloudinaryPublicId: image.cloudinaryPublicId
+        cloudinaryPublicId: image.cloudinaryPublicId,
+        city: image.city
       }
     })
   }

@@ -2,9 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import prisma from '../lib/prisma'
-import { getServerSession } from 'next-auth'
-import { cookies } from 'next/headers'
-import { auth, currentUser, redirectToSignIn } from '@clerk/nextjs'
+import { auth, currentUser } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
 
 export async function clog(text: string) {
@@ -99,6 +97,24 @@ export const editCity = async ({ id, city }: { id: string; city: string }) => {
     return updated
   }
 }
+export const useUser = async (userId: string) => {
+  const userProfile = await prisma.user.findUnique({
+    where: {
+      id: userId
+    },
+    select: {
+      id: true,
+      email: true,
+      userName: true,
+      role: true,
+
+      password: false
+    }
+  })
+  if (userProfile) return userProfile
+
+  throw new Error('User not found')
+}
 
 export const getInitUser = async () => {
   const user = await currentUser()
@@ -116,11 +132,17 @@ export const getInitUser = async () => {
   const userProfile = await prisma.user.findUnique({
     where: {
       id: user.id
+    },
+    select: {
+      id: true,
+      email: true,
+      userName: true,
+      role: true,
+
+      password: false
     }
   })
-  if (userProfile) {
-    return userProfile
-  }
+  if (userProfile) redirect('/')
 
   const newUser: {
     id: string
