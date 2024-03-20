@@ -47,12 +47,12 @@ const EditableTextField = ({ initialValue,onUpdate,updateInitialValue }: Editabl
           onKeyDown={handleKeyPress}
           onBlur={() => setIsEditing(false)}
           autoFocus
-          className="border-b h-20 border-gray-500 focus:border-blue-500 w-full"
+          className="border-b min-h-max border-gray-500 focus:border-blue-500 w-full"
         />
       ) : (
         <div
           onClick={handleDoubleClick}
-          className="cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20"
+          className="cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-fit"
         >
           {value ? value : 'Double click to edit'}
         </div>

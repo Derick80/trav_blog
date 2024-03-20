@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 import { Button } from '../ui/button'
-import { ChevronLeft, ChevronRight, MapPin, PencilIcon } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronsLeft, MapPin, PencilIcon } from 'lucide-react'
 import React from 'react'
 import {
   Card,
@@ -21,19 +21,21 @@ import {
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious
+  PaginationPrevious,
 } from '@/components/ui/pagination'
 import { getImageBuilder, getImgProps } from './images'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useAuth } from "@clerk/nextjs";
+import { cn } from '@/lib/utils'
 
 const ImageCarousel = ({
   images,
   totalImages,
   searchParams,
   startPage,
-  endPage
+  endPage,
+  pagesToShow
 }: {
   images: {
     id: string
@@ -52,7 +54,8 @@ const ImageCarousel = ({
     [key: string]: string | string[] | undefined
   }
   startPage: number
-  endPage: number
+    endPage: number
+    pagesToShow: number
   }) => {
 
   const { userId } = useAuth();
@@ -86,6 +89,7 @@ const ImageCarousel = ({
   }
 
   const isFirstPage = page === 1
+  const isFirstImage = currentIndex === 0
   //determine if there is a next image to display
 
   const hasNext = currentIndex < images.length - 1
@@ -96,7 +100,13 @@ const ImageCarousel = ({
 
   const isLastPage = page === endPage
 
+  const isLastImage = currentIndex === images.length - 1
 
+
+console.log(currentIndex,'currentIndex');
+
+  console.log(images.length,'images.length');
+console.log(isLastImage,'isLastImage');
 
 
   const paginationLinks = []
@@ -114,7 +124,9 @@ const ImageCarousel = ({
   }
 
   return (
-    <Card>
+    <Card
+    className='overflow-hidden p-2'
+    >
       <CardHeader>
         <CardTitle>
           {
@@ -126,26 +138,25 @@ const ImageCarousel = ({
             } }
               />
             ) : (
-              <div
-                  className='flex'>
+
                   <div
-                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
+                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-10'>
                     { currentImage.title }
                     </div>
-                </div>
             )
          }
         </CardTitle>
       </CardHeader>
-      <CardContent className='relative'>
-        <div className='aspect-[3/4] md:aspect-[3/2]'>
+      <CardContent className='p-0'>
+        <div className='aspect-square md:aspect-[3/2] border-2 border-black'>
           {
             <img
               title={currentImage.cloudinaryPublicId}
               {...getImgProps(
                 getImageBuilder(
                   currentImage.cloudinaryPublicId,
-                  currentImage.title,
+                  currentImage.title, {
+                  }
 
                 ),
                 {
@@ -165,7 +176,7 @@ const ImageCarousel = ({
           }
         </div>
 
-        <div className='flex flex-col space-y-2'>
+        <div className='flex flex-col'>
           <Muted className='italic mt-2 indent-2'>
             {
             isOwner || isAdmin ? (
@@ -179,7 +190,7 @@ const ImageCarousel = ({
               <div
                   className='flex'>
                   <div
-                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
+                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-10'>
                     { currentImage.description }
                     </div>
                 </div>
@@ -189,28 +200,33 @@ const ImageCarousel = ({
           <Small className='text-right'>
             {
             isOwner || isAdmin ? (
-               <EditableTextField
+                <div
+                  className='inline-flex'>
+                   <EditableTextField
             initialValue={currentImage.city}
             onUpdate={(value) => {
               editCity({ id: currentImage.id, city: value })
             } }
-              />
+                />
+                                                <MapPin className='h-4 w-4 inline-block ml-1' />
+
+                  </div>
             ) : (
               <div
-                  className='flex'>
+                  className='flex w-full'>
                   <div
-                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
+                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-10'>
                     { currentImage.description }
                     </div>
+
                 </div>
             )
          }
-            <MapPin className='h-4 w-4 inline-block ml-1' />
           </Small>
         </div>
       </CardContent>
-
-        <div className='flex items-center justify-center border-2'>
+{/* I might be able to extract this out to make it cleaner */}
+        <div className='flex w-full items-center justify-center border-2 m-1'>
           {/* Render circles for each image */}
           {images.map((_, index) => (
             <div
@@ -225,42 +241,53 @@ const ImageCarousel = ({
         <Pagination>
           <PaginationContent>
           { hasPrevious ? (
-            <Button className='z-10 ml-4' onClick={ goToPrevious }
-            disabled={isFirstPage && !hasPrevious}
+            <PaginationPrevious
+              href='#'
+              onClick={goToPrevious}
+              disabled={ isFirstImage }
+              className={cn((isFirstImage ? 'bg-primary-foreground opacity-30' : ''), 'h-9 w-9 p-0')}
             >
-              <ChevronLeft className='bg-blue-500 h-8 w-8' />
-            </Button>
+
+           </PaginationPrevious>
           ) :(
             <PaginationPrevious
               href={`/?page=${page - 1}&limit=${limit}`}
               onClick={goToPrevious}
                 prefetch={ true }
-              disabled={isFirstPage}
+                disabled={ isFirstPage }
+              className={cn((isFirstPage ? 'bg-primary-foreground opacity-30' : ''), 'h-9 w-9 p-0')}
               >
               </PaginationPrevious>
             )
           }
 
-            <PaginationItem>
+          {
+            page > 1 && (<PaginationItem>
               <PaginationEllipsis />
             </PaginationItem>
+            )
+            }
             {paginationLinks}
             <PaginationItem>
               <PaginationEllipsis />
             </PaginationItem>
             {hasNext ? (
-            <Button className='z-10 mr-4' onClick={ goToNext }
-
-
+            <PaginationNext
+              href='#'
+              onClick={goToNext}
+              disabled={ isLastImage }
+              className={cn((isLastImage ? 'bg-primary-foreground opacity-30' : ''), 'h-9 w-9 p-0')}
             >
-                <ChevronRight className='h-8 w-8 ' />
-              </Button>
+
+           </PaginationNext>
             ) : (
               <PaginationNext
                 href={`/?page=${page + 1}&limit=${limit}`}
                 prefetch={ true }
                 onClick={goToNext}
-                disabled={isLastPage}
+                disabled={ isLastPage }
+                className={cn((isLastPage ? 'bg-primary-foreground opacity-30' : ''), 'h-9 w-9 p-0')}
+
               >
 
               </PaginationNext>
@@ -272,13 +299,7 @@ const ImageCarousel = ({
           </PaginationContent>
       </Pagination>
             <CardFooter className='flex flex-col justify-between items-center w-full'>
-        <Button asChild>
-          <Link
-            href={ `/edit/${currentImage.id}` }
-          >
-            <PencilIcon className='h-8 w-8' />
-          </Link>
-              </Button>
+
       </CardFooter>
     </Card>
   )
