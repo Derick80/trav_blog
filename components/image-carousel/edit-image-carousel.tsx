@@ -126,8 +126,8 @@ const ImageCarousel = ({
           )}
         </CardTitle>
       </CardHeader>
-      <CardContent >
-        <div className="h-80 border-2 border-purple-500 overflow-y-scroll items-center">
+      <CardContent>
+        <div className="h-80 items-center overflow-y-scroll border-2 border-purple-500">
           {
             <img
               title={currentImage.cloudinaryPublicId}
@@ -173,25 +173,25 @@ const ImageCarousel = ({
               </div>
             )}
           </Muted>
-           {isOwner || isAdmin ? (
-              <div className="inline-flex w-full items-center justify-end">
-                <EditableTextField
-                  initialValue={currentImage.city}
-                  onUpdate={(value) => {
-                    editCity({ id: currentImage.id, city: value })
-                  } }
-                className='border-none '
-                >
+          {isOwner || isAdmin ? (
+            <div className="inline-flex w-full items-center justify-end">
+              <EditableTextField
+                initialValue={currentImage.city}
+                onUpdate={(value) => {
+                  editCity({ id: currentImage.id, city: value })
+                }}
+                className="border-none "
+              >
                 <MapPin className="ml-1 " />
-                </EditableTextField>
+              </EditableTextField>
+            </div>
+          ) : (
+            <div className="flex w-full">
+              <div className="h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500">
+                {currentImage.description}
               </div>
-            ) : (
-              <div className="flex w-full">
-                <div className="h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500">
-                  {currentImage.description}
-                </div>
-              </div>
-            )}
+            </div>
+          )}
         </div>
       </CardContent>
       {/* I might be able to extract this out to make it cleaner */}
