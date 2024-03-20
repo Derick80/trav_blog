@@ -1,14 +1,17 @@
 import React from 'react';
 import { Input } from './ui/input';
+import { cn } from '@/lib/utils';
 
 type EditableTextFieldProps = {
     initialValue?: string;
   onUpdate?: (value: string) => void;
   updateInitialValue?: (value: string) => void;
+  className?: string;
+  children?: React.ReactNode;
 
 };
 
-const EditableTextField = ({ initialValue,onUpdate,updateInitialValue }: EditableTextFieldProps) => {
+const EditableTextField = ({ initialValue,onUpdate,updateInitialValue,className,children }: EditableTextFieldProps) => {
   const [value, setValue] = React.useState(initialValue);
   const [isEditing, setIsEditing] = React.useState(false);
 
@@ -47,15 +50,22 @@ const EditableTextField = ({ initialValue,onUpdate,updateInitialValue }: Editabl
           onKeyDown={handleKeyPress}
           onBlur={() => setIsEditing(false)}
           autoFocus
-          className="border-b min-h-max border-gray-500 focus:border-blue-500 w-full"
+          className={cn("cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-10", className)}
         />
       ) : (
-        <div
+          <div
+            className='flex'>
+           <div
           onClick={handleDoubleClick}
-          className="cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-fit"
+            className={ cn(
+              "cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-10",
+              className
+          )}
         >
           {value ? value : 'Double click to edit'}
-        </div>
+            </div>
+            { children }
+          </div>
       )}
     </div>
   );
