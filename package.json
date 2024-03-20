@@ -12,8 +12,12 @@
     "lint": "next lint",
     "format": "prettier --check --ignore-path .gitignore ."
   },
+  "prettier": {
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
+  },
   "dependencies": {
-    "@auth/prisma-adapter": "^1.5.0",
     "@cld-apis/types": "^0.1.6",
     "@clerk/nextjs": "^4.29.9",
     "@prisma/client": "^5.11.0",

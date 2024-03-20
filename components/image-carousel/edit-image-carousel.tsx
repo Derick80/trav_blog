@@ -1,8 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 'use client'
-import { Button } from '../ui/button'
-import { ChevronLeft, ChevronRight, MapPin, PencilIcon } from 'lucide-react'
+import { MapPin } from 'lucide-react'
 import React from 'react'
 import {
   Card,
@@ -13,7 +12,7 @@ import {
 } from '../ui/card'
 import { Muted, Small } from '../ui/typography'
 import EditableTextField from '../editable-text'
-import { editTitle, editDescription, editCity, } from '@/app/actions'
+import { editTitle, editDescription, editCity } from '@/app/actions'
 import {
   Pagination,
   PaginationContent,
@@ -24,16 +23,16 @@ import {
   PaginationPrevious
 } from '@/components/ui/pagination'
 import { getImageBuilder, getImgProps } from './images'
-import Link from 'next/link'
-import { useSession } from 'next-auth/react'
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from '@clerk/nextjs'
+import { cn } from '@/lib/utils'
 
 const ImageCarousel = ({
   images,
   totalImages,
   searchParams,
   startPage,
-  endPage
+  endPage,
+  isAdmin
 }: {
   images: {
     id: string
@@ -52,40 +51,38 @@ const ImageCarousel = ({
     [key: string]: string | string[] | undefined
   }
   startPage: number
-  endPage: number
-  }) => {
+    endPage: number
+    isAdmin: boolean
+}) => {
+  const { userId } = useAuth()
 
-  const { userId } = useAuth();
-  const roles = new Set(images.map((image) => image.user.role))
+  const isOwner = userId === images[0].userId
 
-
-   const isOwner = userId === images[0].userId
-  const isAdmin =  roles.has('admin')
+  console.log(isOwner, isAdmin, 'isOwner, isAdmin');
 
   const limit =
     typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
   const page =
     typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
   const [currentIndex, setCurrentIndex] = React.useState(0)
-  console.log(currentIndex,'currentIndex');
 
-    const [currentImage, setCurrentImage] = React.useState(images[0]);
+  const [currentImage, setCurrentImage] = React.useState(images[0])
   React.useEffect(() => {
-    setCurrentImage(images[currentIndex]);
-  }, [currentIndex, images]);
+    setCurrentImage(images[currentIndex])
+  }, [currentIndex, images])
 
   const goToPrevious = () => {
-    setCurrentIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : images.length - 1));
-  };
-
-
+    setCurrentIndex((prevIndex) =>
+      prevIndex > 0 ? prevIndex - 1 : images.length - 1
+    )
+  }
 
   const goToNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
-
   }
 
   const isFirstPage = page === 1
+  const isFirstImage = currentIndex === 0
   //determine if there is a next image to display
 
   const hasNext = currentIndex < images.length - 1
@@ -96,8 +93,7 @@ const ImageCarousel = ({
 
   const isLastPage = page === endPage
 
-
-
+  const isLastImage = currentIndex === images.length - 1
 
   const paginationLinks = []
 
@@ -114,31 +110,25 @@ const ImageCarousel = ({
   }
 
   return (
-    <Card>
+    <Card className="overflow-hidden p-2 ">
       <CardHeader>
         <CardTitle>
-          {
-            isOwner || isAdmin ? (
-               <EditableTextField
-            initialValue={currentImage.title}
-            onUpdate={(value) => {
-              editTitle({ id: currentImage.id, title: value })
-            } }
-              />
-            ) : (
-              <div
-                  className='flex'>
-                  <div
-                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
-                    { currentImage.title }
-                    </div>
-                </div>
-            )
-         }
+          {isOwner || isAdmin ? (
+            <EditableTextField
+              initialValue={currentImage.title}
+              onUpdate={(value) => {
+                editTitle({ id: currentImage.id, title: value })
+              }}
+            />
+          ) : (
+            <div className="h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500">
+              {currentImage.title}
+            </div>
+          )}
         </CardTitle>
       </CardHeader>
-      <CardContent className='relative'>
-        <div className='aspect-[3/4] md:aspect-[3/2]'>
+      <CardContent>
+        <div className="h-80 items-center overflow-y-scroll border-2 border-purple-500">
           {
             <img
               title={currentImage.cloudinaryPublicId}
@@ -146,7 +136,9 @@ const ImageCarousel = ({
                 getImageBuilder(
                   currentImage.cloudinaryPublicId,
                   currentImage.title,
-
+                  {
+                    className: 'object-cover w-full h-full'
+                  }
                 ),
                 {
                   widths: [280, 560, 840, 1100, 1650, 2500, 2100, 3100],
@@ -165,121 +157,124 @@ const ImageCarousel = ({
           }
         </div>
 
-        <div className='flex flex-col space-y-2'>
-          <Muted className='italic mt-2 indent-2'>
-            {
-            isOwner || isAdmin ? (
-               <EditableTextField
-            initialValue={currentImage.description}
-            onUpdate={(value) => {
-              editDescription({ id: currentImage.id, description: value })
-            } }
+        <div className="flex flex-col space-y-1.5 p-6">
+          <Muted className="mt-2 indent-2 italic">
+            {isOwner || isAdmin ? (
+              <EditableTextField
+                initialValue={currentImage.description}
+                onUpdate={(value) => {
+                  editDescription({ id: currentImage.id, description: value })
+                }}
               />
             ) : (
-              <div
-                  className='flex'>
-                  <div
-                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
-                    { currentImage.description }
-                    </div>
+              <div className="flex">
+                <div className="h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500">
+                  {currentImage.description}
                 </div>
-            )
-         }
+              </div>
+            )}
           </Muted>
-          <Small className='text-right'>
-            {
-            isOwner || isAdmin ? (
-               <EditableTextField
-            initialValue={currentImage.city}
-            onUpdate={(value) => {
-              editCity({ id: currentImage.id, city: value })
-            } }
-              />
-            ) : (
-              <div
-                  className='flex'>
-                  <div
-                    className='cursor-text border-b border-gray-500 focus:border-blue-500 w-full h-20'>
-                    { currentImage.description }
-                    </div>
-                </div>
-            )
-         }
-            <MapPin className='h-4 w-4 inline-block ml-1' />
-          </Small>
+          {isOwner || isAdmin ? (
+            <div className="inline-flex w-full items-center justify-end">
+              <EditableTextField
+                initialValue={currentImage.city}
+                onUpdate={(value) => {
+                  editCity({ id: currentImage.id, city: value })
+                }}
+                className="border-none "
+              >
+                <MapPin className="ml-1 " />
+              </EditableTextField>
+            </div>
+          ) : (
+            <div className="flex w-full">
+              <div className="h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500">
+                {currentImage.city}
+              </div>
+            </div>
+          )}
         </div>
       </CardContent>
+      {/* I might be able to extract this out to make it cleaner */}
+      <div className="m-1 flex w-full items-center justify-center border-2">
+        {/* Render circles for each image */}
+        {images.map((_, index) => (
+          <div
+            key={index}
+            className={`mx-1 h-4 w-4 rounded-full ${
+              currentIndex === index ? 'bg-black' : 'bg-gray-300'
+            }`}
+            onClick={() => setCurrentIndex(index)} // Navigate to the corresponding image
+          />
+        ))}
+      </div>
+      <Pagination>
+        <PaginationContent>
+          {hasPrevious ? (
+            <PaginationPrevious
+              href="#"
+              onClick={ goToPrevious }
+                              scroll={false}
 
-        <div className='flex items-center justify-center border-2'>
-          {/* Render circles for each image */}
-          {images.map((_, index) => (
-            <div
-              key={index}
-              className={`h-4 w-4 rounded-full mx-1 ${
-                currentIndex === index ? 'bg-black' : 'bg-gray-300'
-              }`}
-              onClick={() => setCurrentIndex(index)} // Navigate to the corresponding image
-            />
-          ))}
-        </div>
-        <Pagination>
-          <PaginationContent>
-          { hasPrevious ? (
-            <Button className='z-10 ml-4' onClick={ goToPrevious }
-            disabled={isFirstPage && !hasPrevious}
-            >
-              <ChevronLeft className='bg-blue-500 h-8 w-8' />
-            </Button>
-          ) :(
+              disabled={isFirstImage}
+              className={cn(
+                isFirstImage ? 'bg-primary-foreground opacity-30' : '',
+                'h-9 w-9 p-0'
+              )}
+            ></PaginationPrevious>
+          ) : (
             <PaginationPrevious
               href={`/?page=${page - 1}&limit=${limit}`}
-              onClick={goToPrevious}
-                prefetch={ true }
-              disabled={isFirstPage}
-              >
-              </PaginationPrevious>
-            )
-          }
+                onClick={ goToPrevious }
+                scroll={false}
+              prefetch={true}
+                disabled={ isFirstPage }
 
+              className={cn(
+                isFirstPage ? 'bg-primary-foreground opacity-30' : '',
+                'h-9 w-9 p-0'
+              )}
+            ></PaginationPrevious>
+          )}
+
+          {page > 1 && (
             <PaginationItem>
               <PaginationEllipsis />
             </PaginationItem>
-            {paginationLinks}
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            {hasNext ? (
-            <Button className='z-10 mr-4' onClick={ goToNext }
+          )}
+          {paginationLinks}
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>
+          {hasNext ? (
+            <PaginationNext
+              href="#"
+              onClick={ goToNext }
+                              scroll={false}
 
-
-            >
-                <ChevronRight className='h-8 w-8 ' />
-              </Button>
-            ) : (
-              <PaginationNext
-                href={`/?page=${page + 1}&limit=${limit}`}
+              disabled={isLastImage}
+              className={cn(
+                isLastImage ? 'bg-primary-foreground opacity-30' : '',
+                'h-9 w-9 p-0'
+              )}
+            ></PaginationNext>
+          ) : (
+            <PaginationNext
+              href={`/?page=${page + 1}&limit=${limit}`}
                 prefetch={ true }
-                onClick={goToNext}
-                disabled={isLastPage}
-              >
+                                scroll={false}
 
-              </PaginationNext>
-            ) }
-
-
-
-
-          </PaginationContent>
+              onClick={goToNext}
+              disabled={isLastPage}
+              className={cn(
+                isLastPage ? 'bg-primary-foreground opacity-30' : '',
+                'h-9 w-9 p-0'
+              )}
+            ></PaginationNext>
+          )}
+        </PaginationContent>
       </Pagination>
-            <CardFooter className='flex flex-col justify-between items-center w-full'>
-        <Button asChild>
-          <Link
-            href={ `/edit/${currentImage.id}` }
-          >
-            <PencilIcon className='h-8 w-8' />
-          </Link>
-              </Button>
-      </CardFooter>
+      <CardFooter className="flex w-full flex-col items-center justify-between"></CardFooter>
     </Card>
   )
 }
