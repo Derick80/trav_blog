@@ -8,6 +8,7 @@ type EditableTextFieldProps = {
   updateInitialValue?: (value: string) => void
   className?: string
   children?: React.ReactNode
+  label?: string
 }
 
 const EditableTextField = ({
@@ -15,7 +16,8 @@ const EditableTextField = ({
   onUpdate,
   updateInitialValue,
   className,
-  children
+  children,
+  label
 }: EditableTextFieldProps) => {
   const [value, setValue] = React.useState(initialValue)
   const [isEditing, setIsEditing] = React.useState(false)
@@ -52,16 +54,21 @@ const EditableTextField = ({
           onBlur={() => setIsEditing(false)}
           autoFocus
           className={cn(
-            'h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500',
+            'h-10 w-full cursor-text border-2 border-gray-500 focus:border-blue-500',
             className
           )}
         />
       ) : (
-        <div className="flex">
+          <div className="flex">
+            {label && ( // Conditionally render label if provided
+            <div className="mr-2 text-sm font-medium text-gray-700">
+              {label}
+            </div>
+          )}
           <div
             onClick={handleDoubleClick}
             className={cn(
-              'h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500',
+              'h-10 w-full cursor-text border-2 border-gray-500 focus:border-blue-500',
               className
             )}
           >

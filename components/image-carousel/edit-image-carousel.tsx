@@ -32,7 +32,6 @@ const ImageCarousel = ({
   searchParams,
   startPage,
   endPage,
-  isAdmin
 }: {
   images: {
     id: string
@@ -52,13 +51,12 @@ const ImageCarousel = ({
   }
   startPage: number
     endPage: number
-    isAdmin: boolean
 }) => {
-  const { userId } = useAuth()
+  const { userId,orgRole } = useAuth()
 
   const isOwner = userId === images[0].userId
 
-  console.log(isOwner, isAdmin, 'isOwner, isAdmin');
+  console.log(isOwner, orgRole, 'isOwner, isAdmin');
 
   const limit =
     typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
@@ -94,8 +92,13 @@ const ImageCarousel = ({
   const isLastPage = page === endPage
 
   const isLastImage = currentIndex === images.length - 1
-
-  const paginationLinks = []
+interface PaginationLinkProps {
+  key: number; // Key is generally expected to be a number or string
+  href: string;
+  isActive: boolean;
+  children: React.ReactNode; // For the page number displayed
+}
+  const paginationLinks = [] as React.ReactNode[]
 
   for (let i = startPage; i <= endPage; i++) {
     paginationLinks.push(
@@ -104,7 +107,8 @@ const ImageCarousel = ({
         href={`/?page=${i}&limit=${limit}`}
         isActive={i === page}
       >
-        {i}
+        { i }
+
       </PaginationLink>
     )
   }
@@ -113,7 +117,7 @@ const ImageCarousel = ({
     <Card className="overflow-hidden p-2 ">
       <CardHeader>
         <CardTitle>
-          {isOwner || isAdmin ? (
+          {isOwner  ? (
             <EditableTextField
               initialValue={currentImage.title}
               onUpdate={(value) => {
@@ -159,7 +163,7 @@ const ImageCarousel = ({
 
         <div className="flex flex-col space-y-1.5 p-6">
           <Muted className="mt-2 indent-2 italic">
-            {isOwner || isAdmin ? (
+            {isOwner  ? (
               <EditableTextField
                 initialValue={currentImage.description}
                 onUpdate={(value) => {
@@ -174,7 +178,7 @@ const ImageCarousel = ({
               </div>
             )}
           </Muted>
-          {isOwner || isAdmin ? (
+          {isOwner  ? (
             <div className="inline-flex w-full items-center justify-end">
               <EditableTextField
                 initialValue={currentImage.city}

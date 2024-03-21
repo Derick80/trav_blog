@@ -2,7 +2,7 @@ import { getAllImages } from './actions'
 import React from 'react'
 import ImageCarousel from '@/components/image-carousel/edit-image-carousel'
 import { H3, Small } from '@/components/ui/typography'
-import { currentUser } from '@clerk/nextjs'
+import { auth, currentUser } from '@clerk/nextjs'
 import { useUser } from '@/app/actions'
 
 
@@ -15,12 +15,7 @@ async function Home({
   }
   }) {
 
-    const user = await currentUser() || null
 
-  const userProfile =await useUser(user?.id || '')
-  console.log(userProfile, 'userProfile');
-
-  const isAdmin = userProfile?.role === 'admin'
 
   const page =    typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
   const limit =
@@ -51,7 +46,7 @@ async function Home({
         <Small>View and edit your progress notes</Small>
       </div>
       <ImageCarousel
-        isAdmin={isAdmin}
+
         images={images}
         totalImages={totalImages}
         searchParams={searchParams}
