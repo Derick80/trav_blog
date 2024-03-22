@@ -41,6 +41,30 @@ export async function getAllImages({
   });
   return { images, totalImages };
 }
+export const getImageById = async (id: string) => {
+  const image = await prisma.photos.findUnique({
+    where: {
+      id,
+    },
+    select: {
+      id: true,
+      cloudinaryPublicId: true,
+      imageUrl: true,
+      title: true,
+      description: true,
+      city: true,
+      flagged: true,
+      userId: true,
+      user: {
+        select: {
+          role: true,
+        },
+      },
+    },
+  });
+
+  return image;
+};
 
 export async function editTitle({ id, title }: { id: string; title: string }) {
   const { userId } = auth();

@@ -1,9 +1,9 @@
 import { getAllImages } from './actions'
 import React from 'react'
-import ImageCarousel from '@/components/image-carousel/edit-image-carousel'
 import { H3, Small } from '@/components/ui/typography'
 import { auth, currentUser } from '@clerk/nextjs'
 import { useUser } from '@/app/actions'
+import ImageSlider from '@/components/image-carousel/experimental-image-carousel'
 
 
 
@@ -45,14 +45,11 @@ async function Home({
         <H3>Progress Notes</H3>
         <Small>View and edit your progress notes</Small>
       </div>
-      <ImageCarousel
-
-        images={images}
-        totalImages={totalImages}
-        searchParams={searchParams}
-        startPage={startPage}
-        endPage={endPage}
-      />
+      <ImageSlider images={ images }
+                totalImages={ totalImages }
+                page={ page }
+                limit={ limit }
+            />
     </div>
   )
 }

@@ -3,13 +3,14 @@
 
 'use client'
 
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import React from 'react'
 import EditableTextField from '../editable-text'
 import { editTitle } from '@/app/actions'
 import { getImgProps, getImageBuilder } from './images'
 import { Muted } from '../ui/typography'
-
+import Link from 'next/link'
+import { Button } from '../ui/button'
 
 
 type ImageSliderProps = {
@@ -31,8 +32,26 @@ images: {
 }
 const ImageSlider = ({images,totalImages,page,limit}:ImageSliderProps) => {
   const [activeIndex, setActiveIndex] = React.useState(0);
+  console.log(page, 'page');
+
 console.log(images.length, 'images.length');
 console.log(activeIndex, 'activeIndex');
+
+  // Calculate the current page and total pages
+  const totalPageNumber = Math.ceil(totalImages / limit);
+  // Determine if it's the first image of the first page
+  const isFirstImage = page === 1 && activeIndex === 0;
+  // Determine if it's the last image of the last page
+  const isLastImage = page === totalPageNumber && activeIndex === images.length - 1;
+
+  // Determine if double chevrons should be used for navigating to the previous page
+  const useDoubleChevronLeft = page > 1 && activeIndex === 0;
+  console.log(useDoubleChevronLeft, 'useDoubleChevronLeft');
+
+  // Determine if double chevrons should be used for navigating to the next page
+  const useDoubleChevronRight = page < totalPageNumber && activeIndex === images.length - 1;
+
+  console.log(useDoubleChevronRight, 'useDoubleChevronRight');
 
   // Access the current image's title using activeIndex
 const {id:currentImageId, cloudinaryPublicId:currentCloudinaryId, title: currentTitle, description: currentDescription, city: currentCity, userId: currentImageUserId,...otherImageProps } = images[activeIndex];
@@ -40,12 +59,13 @@ const {id:currentImageId, cloudinaryPublicId:currentCloudinaryId, title: current
 
 // Calculate the current page and total pages
   const currentPage = page
-    const totalPageNumber = Math.ceil(totalImages / limit)
-    console.log(totalPageNumber, 'totalPageNumber');
+
 
 
     return (
-        <div id="gallery" className="relative w-full gap-1 border-2 border-green-500" data-carousel="slide">
+      <div
+        className="flex flex-col items-center gap-10 justify-center">
+         <div id="gallery" className="relative space-y-1 border-2 border-accent rounded-md"  data-carousel="slide">
 {/* Display the current image's title */}
 
 <EditableTextField
@@ -57,11 +77,13 @@ const {id:currentImageId, cloudinaryPublicId:currentCloudinaryId, title: current
 //   label="Title" // Add label for title doesn't look good atm
   className="text-lg font-semibold" // Optional styling for title
 />
-      <div className="relative h-56 overflow-hidden rounded-lg md:h-96 bg-card">
+      <div className="relative h-72 overflow-hidden rounded-lg md:h-96 bg-card-foreground">
         {images.map((image, index) => (
-          <div
+          <Link
+                          href={`/photos/${image.id}`} passHref
+
             key={image.id}
-            className={`duration-700 ease-in-out ${index === activeIndex ? 'block' : 'hidden'} absolute inset-0 flex items-center justify-center`}
+            className={`p-0 duration-700 ease-in-out ${index === activeIndex ? 'block' : 'hidden'} absolute inset-0 flex items-center justify-center`}
             data-carousel-item
           >
             {
@@ -91,45 +113,99 @@ const {id:currentImageId, cloudinaryPublicId:currentCloudinaryId, title: current
               )}
             />
           }
-                  {/* Description container */}
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-full px-4 py-2 bg-opacity-75 text-center text-sm text-foreground bg-background overflow-hidden" style={{ height: '4rem' }}>
-              {image.description || 'No description available'}
-                </div>
 
-          </div>
-        ))}
+
+          </Link>
+
+        )) }
+
             </div>
             {/* Chevrons */}
 
-      <button
-        type="button"
-        className="absolute top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer focus:outline-none"
+        { useDoubleChevronLeft ? (
+          <Button
+            type="button"
+            variant='rounded'
+            size='icon'
+            className="absolute top-1/2 left-0 z-30 flex items-center bg-primary/30 justify-center cursor-pointer focus:outline-none"
+            data-carousel-prev
+            >
+            <Link
+              href={ `/beta/?page=${page - 1}&limit=${limit}` }
+              prefetch={ true }
+              scroll={ false }
+            legacyBehavior
+              passHref
+            >
+              <a>
+                <ChevronsLeft />
+              </a>
+            </Link>
+          </Button>
+        ) : (
+            <Button
+              // control opacity of button here
+              type="button"
+              variant='rounded'
+              size='icon'
+        className="absolute top-1/2 left-0 flex items-center justify-center cursor-pointer focus:outline-none bg-primary/30"
         data-carousel-prev
       >
-        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full text-primary-foreground hover:bg-primary-foreground hover:text-primary">
           {/* SVG for Previous button */}
-         <ChevronLeft />
+      <ChevronLeft />
           <span className="sr-only">Previous</span>
         </span>
-      </button>
-      <button
-        type="button"
-        className="absolute top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer focus:outline-none"
+        </Button>
+)}
+  { useDoubleChevronRight ? (
+          <Button
+            type="button"
+            variant='rounded'
+            size='icon'
+            className="absolute top-1/2 right-0 z-30 flex items-center bg-primary/30 justify-center cursor-pointer focus:outline-none"
+            data-carousel-next
+            >
+            <Link
+              href={ `/beta/?page=${page + 1}&limit=${limit}` }
+              prefetch={ true }
+              scroll={ false }
+            legacyBehavior
+              passHref
+            >
+              <a>
+                <ChevronsRight />
+              </a>
+            </Link>
+          </Button>
+        ) : (
+            <Button
+              // control opacity of button here
+              type="button"
+              variant='rounded'
+              size='icon'
+        className="absolute top-1/2 right-0 flex items-center justify-center cursor-pointer focus:outline-none bg-primary/30"
         data-carousel-next
       >
-        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full text-primary-foreground hover:bg-primary-foreground hover:text-primary">
           {/* SVG for Next button */}
-            <ChevronRight />
+      <ChevronRight />
           <span className="sr-only">Next</span>
         </span>
-            </button>
+        </Button>
+)}
+{/* Description container */}
+            <div className=" w-full px-4 py-2 bg-opacity-75 text-center text-sm text-foreground bg-background overflow-hidden" >
+              {currentDescription || 'No description available'}
+                </div>
                {/* Add the page indicator below the image or wherever it fits best in your layout */}
       <Muted className="text-center text-xs py-2">
         Page {currentPage} / {totalPageNumber}
       </Muted>
              {/* Place CreateImageLinks here to show circles beneath the image */}
       <CreateImageLinks images={images} totalImages={images.length} currentIndex={activeIndex} setCurrentIndex={setActiveIndex} />
-    </div>
+        </div>
+        </div>
     )
 
 }
@@ -159,10 +235,11 @@ images: {
     setCurrentIndex: React.Dispatch<React.SetStateAction<number>>
 }
 const CreateImageLinks = ({images,totalImages,currentIndex,setCurrentIndex}:CreateImageLinkProps)=>{
+console.log(currentIndex, 'currentIndex');
 
 
     return (
-        <div className="m-1 flex w-full items-center justify-center border-2">
+        <div className="m-1 flex w-full items-center justify-center ">
         {/* Render circles for each image */}
         {images.map((_, index) => (
             <div
