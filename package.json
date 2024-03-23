@@ -10,12 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier \"app/**/*.ts\" \"app/**/*.tsx\" --write . "
-  },
-  "prettier": {
-    "plugins": [
-      "prettier-plugin-tailwindcss"
-    ]
+    "format": "prettier --debug  --config ./prettier.config.js \"app/**/*.ts\" \"app/**/*.tsx\" --write . "
   },
   "dependencies": {
     "@cld-apis/types": "^0.1.6",

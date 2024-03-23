@@ -31,7 +31,7 @@ const ImageCarousel = ({
   totalImages,
   searchParams,
   startPage,
-  endPage,
+  endPage
 }: {
   images: {
     id: string
@@ -50,13 +50,13 @@ const ImageCarousel = ({
     [key: string]: string | string[] | undefined
   }
   startPage: number
-    endPage: number
+  endPage: number
 }) => {
-  const { userId,orgRole } = useAuth()
+  const { userId, orgRole } = useAuth()
 
   const isOwner = userId === images[0].userId
 
-  console.log(isOwner, orgRole, 'isOwner, isAdmin');
+  console.log(isOwner, orgRole, 'isOwner, isAdmin')
 
   const limit =
     typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
@@ -92,12 +92,12 @@ const ImageCarousel = ({
   const isLastPage = page === endPage
 
   const isLastImage = currentIndex === images.length - 1
-interface PaginationLinkProps {
-  key: number; // Key is generally expected to be a number or string
-  href: string;
-  isActive: boolean;
-  children: React.ReactNode; // For the page number displayed
-}
+  interface PaginationLinkProps {
+    key: number // Key is generally expected to be a number or string
+    href: string
+    isActive: boolean
+    children: React.ReactNode // For the page number displayed
+  }
   const paginationLinks = [] as React.ReactNode[]
 
   for (let i = startPage; i <= endPage; i++) {
@@ -107,17 +107,16 @@ interface PaginationLinkProps {
         href={`/?page=${i}&limit=${limit}`}
         isActive={i === page}
       >
-        { i }
-
+        {i}
       </PaginationLink>
     )
   }
 
   return (
-    <Card className="overflow-hidden p-2 ">
+    <Card className='overflow-hidden p-2 '>
       <CardHeader>
         <CardTitle>
-          {isOwner  ? (
+          {isOwner ? (
             <EditableTextField
               initialValue={currentImage.title}
               onUpdate={(value) => {
@@ -125,14 +124,14 @@ interface PaginationLinkProps {
               }}
             />
           ) : (
-            <div className="h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500">
+            <div className='h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500'>
               {currentImage.title}
             </div>
           )}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-80 items-center overflow-y-scroll border-2 border-purple-500">
+        <div className='h-80 items-center overflow-y-scroll border-2 border-purple-500'>
           {
             <img
               title={currentImage.cloudinaryPublicId}
@@ -161,38 +160,44 @@ interface PaginationLinkProps {
           }
         </div>
 
-        <div className="flex flex-col space-y-1.5 p-6">
-          <Muted className="mt-2 indent-2 italic">
-            {isOwner  ? (
+        <div className='flex flex-col space-y-1.5 p-6'>
+          <Muted className='mt-2 indent-2 italic'>
+            {isOwner ? (
               <EditableTextField
                 initialValue={currentImage.description}
                 onUpdate={(value) => {
-                  editDescription({ id: currentImage.id, description: value })
+                  editDescription({
+                    id: currentImage.id,
+                    description: value
+                  })
                 }}
               />
             ) : (
-              <div className="flex">
-                <div className="h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500">
+              <div className='flex'>
+                <div className='h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500'>
                   {currentImage.description}
                 </div>
               </div>
             )}
           </Muted>
-          {isOwner  ? (
-            <div className="inline-flex w-full items-center justify-end">
+          {isOwner ? (
+            <div className='inline-flex w-full items-center justify-end'>
               <EditableTextField
                 initialValue={currentImage.city}
                 onUpdate={(value) => {
-                  editCity({ id: currentImage.id, city: value })
+                  editCity({
+                    id: currentImage.id,
+                    city: value
+                  })
                 }}
-                className="border-none "
+                className='border-none '
               >
-                <MapPin className="ml-1 " />
+                <MapPin className='ml-1 ' />
               </EditableTextField>
             </div>
           ) : (
-            <div className="flex w-full">
-              <div className="h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500">
+            <div className='flex w-full'>
+              <div className='h-10 w-full cursor-text border-b border-gray-500 focus:border-blue-500'>
                 {currentImage.city}
               </div>
             </div>
@@ -200,7 +205,7 @@ interface PaginationLinkProps {
         </div>
       </CardContent>
       {/* I might be able to extract this out to make it cleaner */}
-      <div className="m-1 flex w-full items-center justify-center border-2">
+      <div className='m-1 flex w-full items-center justify-center border-2'>
         {/* Render circles for each image */}
         {images.map((_, index) => (
           <div
@@ -216,10 +221,9 @@ interface PaginationLinkProps {
         <PaginationContent>
           {hasPrevious ? (
             <PaginationPrevious
-              href="#"
-              onClick={ goToPrevious }
-                              scroll={false}
-
+              href='#'
+              onClick={goToPrevious}
+              scroll={false}
               disabled={isFirstImage}
               className={cn(
                 isFirstImage ? 'bg-primary-foreground opacity-30' : '',
@@ -229,11 +233,10 @@ interface PaginationLinkProps {
           ) : (
             <PaginationPrevious
               href={`/?page=${page - 1}&limit=${limit}`}
-                onClick={ goToPrevious }
-                scroll={false}
+              onClick={goToPrevious}
+              scroll={false}
               prefetch={true}
-                disabled={ isFirstPage }
-
+              disabled={isFirstPage}
               className={cn(
                 isFirstPage ? 'bg-primary-foreground opacity-30' : '',
                 'h-9 w-9 p-0'
@@ -252,10 +255,9 @@ interface PaginationLinkProps {
           </PaginationItem>
           {hasNext ? (
             <PaginationNext
-              href="#"
-              onClick={ goToNext }
-                              scroll={false}
-
+              href='#'
+              onClick={goToNext}
+              scroll={false}
               disabled={isLastImage}
               className={cn(
                 isLastImage ? 'bg-primary-foreground opacity-30' : '',
@@ -265,9 +267,8 @@ interface PaginationLinkProps {
           ) : (
             <PaginationNext
               href={`/?page=${page + 1}&limit=${limit}`}
-                prefetch={ true }
-                                scroll={false}
-
+              prefetch={true}
+              scroll={false}
               onClick={goToNext}
               disabled={isLastPage}
               className={cn(
@@ -278,7 +279,7 @@ interface PaginationLinkProps {
           )}
         </PaginationContent>
       </Pagination>
-      <CardFooter className="flex w-full flex-col items-center justify-between"></CardFooter>
+      <CardFooter className='flex w-full flex-col items-center justify-between'></CardFooter>
     </Card>
   )
 }

@@ -7,7 +7,7 @@ type EditableTextFieldProps = {
   onUpdate?: (value: string) => void
   updateInitialValue?: (value: string) => void
   className?: string
-    label?: string
+  label?: string
 }
 
 const EditableTextField = ({
@@ -45,7 +45,7 @@ const EditableTextField = ({
     <>
       {isEditing ? (
         <Input
-          type="text"
+          type='text'
           value={value}
           onChange={handleInputChange}
           onKeyDown={handleKeyPress}
@@ -57,9 +57,9 @@ const EditableTextField = ({
           )}
         />
       ) : (
-          <>
-            {label && ( // Conditionally render label if provided
-            <div className="mr-2 text-sm font-medium text-gray-700">
+        <>
+          {label && ( // Conditionally render label if provided
+            <div className='mr-2 text-sm font-medium text-gray-700'>
               {label}
             </div>
           )}

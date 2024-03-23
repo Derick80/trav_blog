@@ -37,5 +37,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 ## Modal
 
-- I have created a modal component that can be used to display any content. I had initially thought to use it for my image slider but I built 'in-line' editing and the nature of the modal made clicking the next and previous buttons difficult. I have left the modal in the project as it can be used for other purposes.  I am going to revert the code after committing. The commit will be called 'Modal-implementation'.
+- I have created a modal component that can be used to display any content. I had initially thought to use it for my image slider but I built 'in-line' editing and the nature of the modal made clicking the next and previous buttons difficult. I have left the modal in the project as it can be used for other purposes. I am going to revert the code after committing. The commit will be called 'Modal-implementation'.
 - [Example repository](https://github.com/vercel/nextgram/tree/main)

@@ -1,21 +1,21 @@
-"use server";
+'use server'
 
-import { revalidatePath } from "next/cache";
-import prisma from "../lib/prisma";
-import { auth, currentUser } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
+import { revalidatePath } from 'next/cache'
+import prisma from '../lib/prisma'
+import { auth, currentUser } from '@clerk/nextjs'
+import { redirect } from 'next/navigation'
 
 export async function clog(text: string) {
-  console.log(text);
+  console.log(text)
 }
 export async function getAllImages({
   page,
-  limit,
+  limit
 }: {
-  page: number;
-  limit: number;
+  page: number
+  limit: number
 }) {
-  const totalImages = await prisma.photos.count();
+  const totalImages = await prisma.photos.count()
   const images = await prisma.photos.findMany({
     select: {
       id: true,
@@ -28,23 +28,23 @@ export async function getAllImages({
       userId: true,
       user: {
         select: {
-          role: true,
-        },
-      },
+          role: true
+        }
+      }
     },
 
     orderBy: {
-      createdAt: "desc",
+      createdAt: 'desc'
     },
     skip: (page - 1) * limit,
-    take: limit,
-  });
-  return { images, totalImages };
+    take: limit
+  })
+  return { images, totalImages }
 }
 export const getImageById = async (id: string) => {
   const image = await prisma.photos.findUnique({
     where: {
-      id,
+      id
     },
     select: {
       id: true,
@@ -57,75 +57,75 @@ export const getImageById = async (id: string) => {
       userId: true,
       user: {
         select: {
-          role: true,
-        },
-      },
-    },
-  });
+          role: true
+        }
+      }
+    }
+  })
 
-  return image;
-};
+  return image
+}
 
 export async function editTitle({ id, title }: { id: string; title: string }) {
-  const { userId } = auth();
+  const { userId } = auth()
 
   if (!userId) {
-    return redirect("/api/auth/signin");
+    return redirect('/api/auth/signin')
   }
 
   const updated = await prisma.photos.update({
     where: {
-      id,
+      id
     },
     data: {
-      title,
-    },
-  });
+      title
+    }
+  })
   if (updated) {
-    revalidatePath("/posts");
-    return updated;
+    revalidatePath('/posts')
+    return updated
   }
 }
 
 export async function editDescription({
   id,
-  description,
+  description
 }: {
-  id: string;
-  description: string;
+  id: string
+  description: string
 }) {
   const updated = await prisma.photos.update({
     where: {
-      id,
+      id
     },
     data: {
-      description,
-    },
-  });
+      description
+    }
+  })
   if (updated) {
-    revalidatePath("/posts");
-    return updated;
+    revalidatePath('/posts')
+    return updated
   }
 }
 
 export const editCity = async ({ id, city }: { id: string; city: string }) => {
   const updated = await prisma.photos.update({
     where: {
-      id,
+      id
     },
     data: {
-      city,
-    },
-  });
+      city
+    }
+  })
   if (updated) {
-    revalidatePath("/posts");
-    return updated;
+    revalidatePath('/posts')
+    return updated
   }
-};
+}
 export const useUser = async (userId: string) => {
   const userProfile = await prisma.user.findUnique({
     where: {
-      id: userId,
+      id: userId
     },
     select: {
       id: true,
@@ -133,30 +133,30 @@ export const useUser = async (userId: string) => {
       userName: true,
       role: true,
 
-      password: false,
-    },
-  });
-  if (userProfile) return userProfile;
+      password: false
+    }
+  })
+  if (userProfile) return userProfile
 
-  throw new Error("User not found");
-};
+  throw new Error('User not found')
+}
 
 export const getInitUser = async () => {
-  const user = await currentUser();
-  console.log(user, "initUser");
+  const user = await currentUser()
+  console.log(user, 'initUser')
 
   if (!user) {
     return {
       redirect: {
-        destination: "/sign-in",
-        permanent: false,
-      },
-    };
+        destination: '/sign-in',
+        permanent: false
+      }
+    }
   }
 
   const userProfile = await prisma.user.findUnique({
     where: {
-      id: user.id,
+      id: user.id
     },
     select: {
       id: true,
@@ -164,32 +164,32 @@ export const getInitUser = async () => {
       userName: true,
       role: true,
 
-      password: false,
-    },
-  });
-  if (userProfile) redirect("/");
+      password: false
+    }
+  })
+  if (userProfile) redirect('/')
 
   const newUser: {
-    id: string;
-    email: string;
-    userName: string;
-    role: string;
+    id: string
+    email: string
+    userName: string
+    role: string
     userImages: {
-      id: string;
-      imageUrl: string;
-    }[];
+      id: string
+      imageUrl: string
+    }[]
   } = await prisma.user.create({
     data: {
       id: user.id,
       email: user.emailAddresses[0].emailAddress,
-      userName: user.username ?? user.firstName ?? "",
-      role: "user",
+      userName: user.username ?? user.firstName ?? '',
+      role: 'user',
       userImages: {
         create: {
           id: user.id,
-          imageUrl: user.imageUrl ?? "",
-        },
-      },
+          imageUrl: user.imageUrl ?? ''
+        }
+      }
     },
     select: {
       id: true,
@@ -199,13 +199,13 @@ export const getInitUser = async () => {
       userImages: {
         select: {
           id: true,
-          imageUrl: true,
-        },
-      },
-    },
-  });
+          imageUrl: true
+        }
+      }
+    }
+  })
 
-  if (newUser) redirect("/");
+  if (newUser) redirect('/')
 
-  throw new Error("User not found");
-};
+  throw new Error('User not found')
+}
