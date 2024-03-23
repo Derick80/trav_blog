@@ -16,6 +16,7 @@ import { getImgProps, getImageBuilder } from "./images";
 import { Muted } from "../ui/typography";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 type ImageSliderProps = {
   images: {
@@ -82,26 +83,27 @@ const ImageSlider = ({
   const currentPage = page;
 
   return (
-    <div
+    <Card
       // removing items-center caused less layout shift
-      className="flex w-full h-auto flex-col justify-center gap-10 "
     >
-      <div
-        id="gallery"
-        className="relatsive space-y-1 rounded-md"
-        data-carousel="slide"
-      >
-        {/* Display the current image's title */}
 
-        <EditableTextField
+        {/* Display the current image's title */}
+  <CardHeader>
+
+        <CardTitle ><EditableTextField
           initialValue={currentTitle} // Use image.title for the title field
           onUpdate={(value) => {
             editTitle({ id: currentImageId, title: value });
           }} // Function to update the title state
           //   label="Title" // Add label for title doesn't look good atm
           className="text-lg font-semibold" // Optional styling for title
-        />
-        <div className="relative flex h-72 min-h-[72px] overflow-hidden rounded-lg bg-red-500 md:h-96 ">
+        /></CardTitle>
+      </CardHeader>
+
+      <CardContent
+      className='relative flex h-96 items-center min-h-96 overflow-hidden rounded-lg'
+      >
+          {/* <div className="relative flex h-96 items-center min-h-96 overflow-hidden rounded-lg"> */}
 
         {useDoubleChevronLeft ? (
           <Button
@@ -145,7 +147,7 @@ const ImageSlider = ({
           {images.map((image, index) => (
             <div
               key={image.id}
-              className={`p-0 duration-700 ease-in-out ${index === activeIndex ? "block" : "hidden"}  inset-0 items-center justify-between opacity-100 transition-opacity`}
+              className={`p-0 duration-1000 ease-in-out ${index === activeIndex ? "block" : "hidden"} inset-0 items-center justify-between opacity-100 transition-opacity`}
               data-carousel-item
             >
               {
@@ -153,7 +155,7 @@ const ImageSlider = ({
                   title={currentTitle}
                   {...getImgProps(
                     getImageBuilder(currentCloudinaryId, currentTitle, {
-                      className: "object-cover",
+                      className: "object-cover md:object-scale-fill",
                     }),
                     {
                       widths: [320, 480, 640, 750, 828, 1125, 1242], // Include wdths for 1x, 2x, and 3x screens
@@ -209,7 +211,8 @@ const ImageSlider = ({
             </span>
           </Button>
         )}
-        </div>
+        {/* </div> */}
+      </CardContent>
 
         {/* Description container */}
         <EditableTextField
@@ -231,8 +234,7 @@ const ImageSlider = ({
           currentIndex={activeIndex}
           setCurrentIndex={setActiveIndex}
         />
-      </div>
-    </div>
+      </Card>
   );
 };
 
