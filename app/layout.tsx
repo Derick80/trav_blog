@@ -32,7 +32,7 @@ export default async function RootLayout (props: {
          inter.className
       ) }>
      <NavMenu />
-<main className="flex min-h-screen flex-col flex-grow items-center border-2 border-teal-400 p-10">
+<main className="flex flex-col flex-grow items-center border-2 border-teal-400 p-1 md:p-5">
             { props.children }
             { props.modal }
 

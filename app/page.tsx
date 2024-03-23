@@ -38,12 +38,11 @@ async function Home({
   const endPage = Math.min(totalPages, startPage + visiblePages - 1)
 
   return (
-    <div className="flex w-full flex-col gap-5 py-2">
+    <div className="flex w-full max-w-screen-md h-full flex-col gap-1 md:gap-5 py-2">
       {/* { me && <div className="absolute top-0 right-0 p-4 bg-white z-10">Welcome {me}</div>
       } */}
       <div className="flex flex-col items-center ">
-        <H3>Progress Notes</H3>
-        <Small>View and edit your progress notes</Small>
+
       </div>
       <ImageSlider images={ images }
                 totalImages={ totalImages }
