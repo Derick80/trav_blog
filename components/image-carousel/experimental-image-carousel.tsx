@@ -16,7 +16,14 @@ import { getImgProps, getImageBuilder } from "./images";
 import { H3, Muted, Small } from "../ui/typography";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle,CardDescription } from '../ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "../ui/card";
 
 type ImageSliderProps = {
   images: {
@@ -85,43 +92,41 @@ const ImageSlider = ({
   return (
     <Card
 
-      // removing items-center caused less layout shift
+    // removing items-center caused less layout shift
     >
-
-        {/* Display the current image's title */}
-  <CardHeader>
-
-        <CardTitle ><EditableTextField
-          initialValue={currentTitle} // Use image.title for the title field
-          onUpdate={(value) => {
-            editTitle({ id: currentImageId, title: value });
-          }} // Function to update the title state
-          //   label="Title" // Add label for title doesn't look good atm
-          className="text-lg font-semibold" // Optional styling for title
-        /></CardTitle>
+      {/* Display the current image's title */}
+      <CardHeader>
+        <CardTitle>
+          <EditableTextField
+            initialValue={currentTitle} // Use image.title for the title field
+            onUpdate={(value) => {
+              editTitle({ id: currentImageId, title: value });
+            }} // Function to update the title state
+            //   label="Title" // Add label for title doesn't look good atm
+            className="text-lg font-semibold" // Optional styling for title
+          />
+        </CardTitle>
         <CardDescription>
-         <EditableTextField
-          initialValue={currentDescription} // Use image.title for the title field
-          onUpdate={(value) => {
-            editDescription({ id: currentImageId, description: value });
-          }} // Function to update the title state
-          //   label="Title" // Add label for title doesn't look good atm
-          className="text-lg font-semibold" // Optional styling for title
-        />
-</CardDescription>
+          <EditableTextField
+            initialValue={currentDescription} // Use image.title for the title field
+            onUpdate={(value) => {
+              editDescription({ id: currentImageId, description: value });
+            }} // Function to update the title state
+            //   label="Title" // Add label for title doesn't look good atm
+            className="text-lg font-semibold" // Optional styling for title
+          />
+        </CardDescription>
       </CardHeader>
 
-      <CardContent
-      className='relative flex h-96 md:h-[500px] items-center min-h-96 overflow-hidden md:overflow-y-auto rounded-lg'
-      >
-          {/* <div className="relative flex h-96 items-center min-h-96 overflow-hidden rounded-lg"> */}
+      <CardContent className="relative flex h-96 min-h-96 items-center overflow-hidden rounded-lg md:h-[500px] md:overflow-y-auto">
+        {/* <div className="relative flex h-96 items-center min-h-96 overflow-hidden rounded-lg"> */}
 
         {useDoubleChevronLeft ? (
           <Button
             type="button"
             variant="rounded"
             size="icon"
-            className="absolute left-7 Z-30 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none"
+            className="Z-30 absolute left-7 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none"
             data-carousel-prev
           >
             <Link
@@ -142,7 +147,7 @@ const ImageSlider = ({
             type="button"
             variant="rounded"
             size="icon"
-            className="absolute left-7  Z-30 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none"
+            className="Z-30 absolute  left-7 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none"
             onClick={() => setActiveIndex(activeIndex - 1)}
             disabled={isFirstImage}
             data-carousel-prev
@@ -153,44 +158,44 @@ const ImageSlider = ({
               <span className="sr-only">Previous</span>
             </span>
           </Button>
-          ) }
+        )}
 
-          {images.map((image, index) => (
-            <div
-              key={image.id}
-              className={`p-0 duration-1000 ease-in-out ${index === activeIndex ? "block" : "hidden"} inset-0 items-center justify-between opacity-100 transition-opacity`}
-              data-carousel-item
-            >
-              {
-                <img
-                  title={currentTitle}
-                  {...getImgProps(
-                    getImageBuilder(currentCloudinaryId, currentTitle, {
-                      className: "object-cover w-full h-full md:object-contain",
-                    }),
-                    {
-                      widths: [320, 480, 640, 750, 828, 1125, 1242], // Include wdths for 1x, 2x, and 3x screens
-                      sizes: [
-                        "(max-width: 640px) 100vw", // 100% of the viewport width on small screens
-                        "(max-width: 768px) 100vw", // 50% of the viewport width on medium screens
-                        "(max-width: 1024px) 100vw", // 33% of the viewport width on large screens
-                      ],
-                      transformations: {
-                        quality: "auto",
-                        format: "webp",
-                      },
+        {images.map((image, index) => (
+          <div
+            key={image.id}
+            className={`p-0 duration-1000 ease-in-out ${index === activeIndex ? "block" : "hidden"} inset-0 items-center justify-between opacity-100 transition-opacity`}
+            data-carousel-item
+          >
+            {
+              <img
+                title={currentTitle}
+                {...getImgProps(
+                  getImageBuilder(currentCloudinaryId, currentTitle, {
+                    className: "object-cover w-full h-full md:object-contain",
+                  }),
+                  {
+                    widths: [320, 480, 640, 750, 828, 1125, 1242], // Include wdths for 1x, 2x, and 3x screens
+                    sizes: [
+                      "(max-width: 640px) 100vw", // 100% of the viewport width on small screens
+                      "(max-width: 768px) 100vw", // 50% of the viewport width on medium screens
+                      "(max-width: 1024px) 100vw", // 33% of the viewport width on large screens
+                    ],
+                    transformations: {
+                      quality: "auto",
+                      format: "webp",
                     },
-                  )}
-                />
-              }
-            </div>
-          )) }
-           {useDoubleChevronRight ? (
+                  },
+                )}
+              />
+            }
+          </div>
+        ))}
+        {useDoubleChevronRight ? (
           <Button
             type="button"
             variant="rounded"
             size="icon"
-            className="absolute right-7  Z-30 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none"
+            className="Z-30 absolute  right-7 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none"
             data-carousel-next
           >
             <Link
@@ -211,7 +216,7 @@ const ImageSlider = ({
             type="button"
             variant="rounded"
             size="icon"
-            className="absolute right-7  Z-30 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none"
+            className="Z-30 absolute  right-7 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none"
             onClick={() => setActiveIndex((prevIndex) => prevIndex + 1)}
             data-carousel-next
           >
@@ -222,14 +227,11 @@ const ImageSlider = ({
             </span>
           </Button>
         )}
-        {/* </div> */ }
-
+        {/* </div> */}
       </CardContent>
 
-      <CardFooter
-className='flex flex-col w-full'
-      >
-           {/* Description container */}
+      <CardFooter className="flex w-full flex-col">
+        {/* Description container */}
 
         {/* Add the page indicator below the image or wherever it fits best in your layout */}
         <Muted className="py-2  text-xs">
@@ -242,14 +244,11 @@ className='flex flex-col w-full'
           currentIndex={activeIndex}
           setCurrentIndex={setActiveIndex}
         />
-                  <Muted>Total Images: {totalImages}</Muted>
+        <Muted>Total Images: {totalImages}</Muted>
 
-
-        <Small
-        className='text-right'
-        >City: { currentCity }</Small>
-     </CardFooter>
-      </Card>
+        <Small className="text-right">City: {currentCity}</Small>
+      </CardFooter>
+    </Card>
   );
 };
 
@@ -295,8 +294,6 @@ const CreateImageLinks = ({
     </div>
   );
 };
-
-
 
 // this button below has the css I could use to make the button full height.
 
