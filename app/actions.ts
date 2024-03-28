@@ -238,7 +238,7 @@ export const useUser = async (userId: string) => {
 
 export const getCurrentUser = async () => {
   const { userId } = auth()
-  if(!userId) return null
+  if (!userId) return null
   const userProfile = await prisma.user.findUnique({
     where: {
       id: userId

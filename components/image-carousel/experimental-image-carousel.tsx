@@ -257,12 +257,12 @@ const ImageSlider = ({
       </CardContent>
 
       <CardFooter className='flex w-full flex-col'>
-        <Small className='text-right'>City: { currentCity }</Small>
+        <Small className='text-right'>City: {currentCity}</Small>
         <Link
-          href={ `/photos/${currentImageId}` } // Link to the user's profile
+          href={`/photos/${currentImageId}`} // Link to the user's profile
           passHref
         >
-           View Full Photo
+          View Full Photo
         </Link>
 
         <ImageUserInteractionMenu

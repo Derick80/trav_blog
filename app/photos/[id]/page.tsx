@@ -5,9 +5,9 @@ export default async function PhotoPage({
 }: {
   params: { id: string }
 }) {
-  const image = await getImageById(id);
+  const image = await getImageById(id)
   if (!image) {
-    return <div>Not found</div>;
+    return <div>Not found</div>
   }
   return <div className='card'>{id}</div>
 }
