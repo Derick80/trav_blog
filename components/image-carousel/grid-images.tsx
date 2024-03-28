@@ -82,7 +82,7 @@ const ImageGallerySlider = ({
     )
   }
   return (
-      <div className='flex h-full  w-96 md:w-[500px] flex-col'>
+      <div className='flex h-full mx-auto  w-96 md:w-[500px] flex-col'>
           {
                 role === 'admin' ? (
                   <EditableTextField
@@ -101,17 +101,20 @@ const ImageGallerySlider = ({
                 )
          }
 
-      <div className='relative h-[225px] md:h-[500px] w-96 md:w-[500px] mx-auto'>
+      <div className='relative h-[225px] md:h-[500px] w-96 md:w-[500px] mx-auto overflow-hidsden'>
         <div className='absolute inset-0'>
           {images.map((image, index) => (
             <div
-              className='absolute left-0 top-0 h-[225px] md:h-[500px] w-full'
+              className={`absolute   transition-opacity duration-1000 ${index === currentIndex ? 'opacity-100' : 'opacity-0'}  left-0 top-0 h-[225px] md:h-[500px] w-full`}
               style={{ zIndex: images.length - index }}
               key={image.id}
             >
               <Image
+                placeholder='blur'
+                blurDataURL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg=='
                 src={images[currentIndex].imageUrl}
-                alt={images[currentIndex].title}
+                alt={ images[currentIndex].title }
+
                 // width={ 300 }
                 // height={ 225 }
 
@@ -167,7 +170,7 @@ const ImageGallerySlider = ({
             type='button'
             variant='ghost'
             size='icon'
-            className='absolute left-0 top-1/2 z-20 -translate-y-1/2 transform rounded-full bg-primary p-1 hover:bg-primary/80'
+            className='absolute h-full left-0 top-1/2 z-20 -translate-y-1/2 transform rounded-md rounded-r-none  bg-primary/20 p-1 hover:bg-primary/80'
             onClick={() => setCurrentIndex(images.length - 1)}
             disabled={isFirstImage}
           >
@@ -179,7 +182,9 @@ const ImageGallerySlider = ({
               passHref
             >
               <a>
-                <ChevronsLeft />
+                <ChevronsLeft
+                  className='h-6 w-6 text-primary-foreground'
+                />
               </a>
             </Link>
           </Button>
@@ -188,7 +193,9 @@ const ImageGallerySlider = ({
             type='button'
             variant='ghost'
             size='icon'
-            className='absolute left-0 top-1/2 z-20 -translate-y-1/2 transform rounded-full bg-primary p-1 hover:bg-primary/80'
+              className="absolute h-full left-0 top-1/2 transform -translate-y-1/2 bg-primary/20 p-1 rounded-full z-20 hover:bg-primary/80"
+
+
             onClick={showPreviousImage}
             disabled={isFirstImage}
           >
@@ -201,7 +208,7 @@ const ImageGallerySlider = ({
             type='button'
             variant='ghost'
             size='icon'
-            className='absolute right-0 top-1/2 z-20 -translate-y-1/2 transform rounded-full bg-primary p-1 hover:bg-primary/80'
+            className='absolute h-full right-0 top-1/2 z-20 -translate-y-1/2 transform rounded-md rounded-l-none bg-primary/20 p-1 hover:bg-primary/80'
             onClick={() => setCurrentIndex(0)}
           >
             <Link
@@ -212,7 +219,9 @@ const ImageGallerySlider = ({
               passHref
             >
               <a>
-                <ChevronsRight />
+                <ChevronsRight
+                  className='h-6 w-6 text-primary-foreground'
+                />
               </a>
             </Link>
           </Button>
@@ -221,8 +230,10 @@ const ImageGallerySlider = ({
             type='button'
             variant='ghost'
             size='icon'
-            className='absolute right-0 top-1/2 z-20 -translate-y-1/2 transform rounded-full bg-primary p-1 hover:bg-primary/80'
-            disabled={isLastImage}
+                   className="absolute h-full right-0 top-1/2 transform -translate-y-1/2 bg-primary/20 p-1 rounded-full z-20 hover:bg-primary/80"
+
+              disabled={ isLastImage }
+
             onClick={showNextImage}
           >
             <ChevronRight className='h-6 w-6 text-primary-foreground' />
@@ -295,26 +306,22 @@ const ImageGallerySlider = ({
 
                       }
                   >
-                        { page < totalPageNumber ? (
+
                             <PaginationLink
-                                    href={ `/?page=${ page + 1 }&limit=${ limit }` }
+                href={
+                  page < totalPageNumber ? `/?page=${ page + 1 }&limit=${ limit }` : `/?page=1&limit=${ limit }`
+                                    }
+
                                     prefetch={ true }
                                     scroll={ false }
                                     legacyBehavior
                                 passHref
                             >
-                                <ChevronRight />
+              {
+                page < totalPageNumber ? <ChevronRight /> : <ChevronsRight />
+                              }
                             </PaginationLink>
-                        ) : (
-                                <PaginationLink
-                                        href={ `/?page=1&limit=${ limit }` }
-                                        prefetch={ true }
-                                        scroll={ false }
-                                        legacyBehavior
-                                        passHref>
-                                    <ChevronsRight />
-                                    </PaginationLink>
-                        )}
+
                   </PaginationItem>
                     </PaginationContent>
             </Pagination>
