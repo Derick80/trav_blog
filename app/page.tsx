@@ -7,7 +7,8 @@ import BaseImageSlider from '@/components/image-carousel/base-image-carousel'
 
 import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import GridCarousel from '@/components/image-carousel/grid-images'
+import Gridcarousel from '@/components/image-carousel/grid-images'
+import { H2, H3 } from '@/components/ui/typography'
 
 async function Home({
   searchParams
@@ -33,8 +34,10 @@ async function Home({
   }
 
   return (
-    <div className=''>
-      <GridCarousel totalImages={totalImages} page={page} images={images} />
+    <div className='flex flex-col items-center justify-center'>
+      <H2>Image Carousel</H2>
+      <H3>Grid Carousel</H3>
+      <Gridcarousel totalImages={totalImages} page={page} images={images} />
       {userRole?.role === 'admin' ? (
         <ImageSlider
           images={images}
@@ -52,7 +55,7 @@ async function Home({
       )}
       <div>
         {/* { images.map((image) => (
-          <GridCarousel
+          <Gridcarousel
             key={ image.id }
             images={ [image] }
           />
@@ -65,7 +68,7 @@ async function Home({
 
 export default Home
 
-// const GridCarousel = ({ images }: {
+// const Gridcarousel = ({ images }: {
 //   images: {
 //     id: string
 //     cloudinaryPublicId: string
