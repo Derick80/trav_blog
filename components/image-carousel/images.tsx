@@ -51,13 +51,13 @@ const getImgProps = (
     sizes,
     transformations,
     className,
-    style,
+    style
   }: {
     widths: Array<number>
     sizes: Array<string>
-      transformations?: TransformerOption
-      className?: string
-      style?: CSSProperties
+    transformations?: TransformerOption
+    className?: string
+    style?: CSSProperties
   }
 ) => {
   const averageSize = Math.ceil(widths.reduce((a, s) => a + s) / widths.length)
@@ -89,12 +89,12 @@ const getImgProps = (
       )
       .join(', '),
     sizes: sizes.join(', '),
-    crossOrigin: 'anonymous',
+    crossOrigin: 'anonymous'
   } as const
 }
 
 // cloudinary needs double-encoding
-function doubleEncode (s: string) {
+function doubleEncode(s: string) {
   return encodeURIComponent(encodeURIComponent(s))
 }
 

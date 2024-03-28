@@ -31,7 +31,7 @@ import {
   PaginationItem,
   PaginationLink,
   PaginationNext,
-  PaginationPrevious,
+  PaginationPrevious
 } from '../ui/pagination'
 type ImageSliderProps = {
   images: {
@@ -76,7 +76,6 @@ const ImageSlider = ({
   const useDoubleChevronRight =
     page < totalPageNumber && activeIndex === images.length - 1
 
-
   // Access the current image's title using activeIndex
   const {
     id: currentImageId,
@@ -84,13 +83,11 @@ const ImageSlider = ({
     title: currentTitle,
     description: currentDescription,
     city: currentCity,
-    userId: currentImageUserId,
+    userId: currentImageUserId
   } = images[activeIndex]
-
 
   const handleImageDelete = async () => {
     return await deleteImage(currentImageId)
-
   }
 
   return (
@@ -98,52 +95,52 @@ const ImageSlider = ({
 
     // removing items-center caused less layout shift
     >
-      {/* Display the current image's title */ }
+      {/* Display the current image's title */}
       <CardHeader>
         <CardTitle>
           <EditableTextField
-            initialValue={ currentTitle } // Use image.title for the title field
-            onUpdate={ (value) => {
+            initialValue={currentTitle} // Use image.title for the title field
+            onUpdate={(value) => {
               editTitle({ id: currentImageId, title: value })
-            } } // Function to update the title state
+            }} // Function to update the title state
             //   label="Title" // Add label for title doesn't look good atm
             className='text-lg font-semibold' // Optional styling for title
           />
         </CardTitle>
         <CardDescription>
           <EditableTextField
-            initialValue={ currentDescription } // Use image.title for the title field
-            onUpdate={ (value) => {
+            initialValue={currentDescription} // Use image.title for the title field
+            onUpdate={(value) => {
               editDescription({
                 id: currentImageId,
                 description: value
               })
-            } } // Function to update the title state
+            }} // Function to update the title state
             //   label="Title" // Add label for title doesn't look good atm
             className='text-lg font-semibold' // Optional styling for title
           />
         </CardDescription>
       </CardHeader>
 
-      <CardContent className='relative flex h-96 min-h-96 items-center overflow-hidden rounded-lg md:h-[500px] justify-center md:overflow-y-auto'>
-        {/* <div className="relative flex h-96 items-center min-h-96 overflow-hidden rounded-lg"> */ }
+      <CardContent className='relative flex h-96 min-h-96 items-center justify-center overflow-hidden rounded-lg md:h-[500px] md:overflow-y-auto'>
+        {/* <div className="relative flex h-96 items-center min-h-96 overflow-hidden rounded-lg"> */}
 
-        { useDoubleChevronLeft ? (
+        {useDoubleChevronLeft ? (
           <Button
             type='button'
             variant='rounded'
             size='icon'
-            className='z-30 absolute left-7 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none'
+            className='absolute left-7 z-30 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none'
             data-carousel-prev
           >
             <Link
-              href={ `/?page=${page - 1}&limit=${limit}` }
-              prefetch={ true }
-              scroll={ false }
+              href={`/?page=${page - 1}&limit=${limit}`}
+              prefetch={true}
+              scroll={false}
               legacyBehavior
               passHref
             >
-              <a onClick={ () => setActiveIndex(images.length - 1) }>
+              <a onClick={() => setActiveIndex(images.length - 1)}>
                 <ChevronsLeft />
               </a>
             </Link>
@@ -155,55 +152,51 @@ const ImageSlider = ({
             variant='rounded'
             size='icon'
             className='Z-30 absolute left-7 cursor-pointer items-center justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none'
-            onClick={ () => setActiveIndex(activeIndex - 1) }
-            disabled={ isFirstImage }
+            onClick={() => setActiveIndex(activeIndex - 1)}
+            disabled={isFirstImage}
             data-carousel-prev
           >
             <span className='inline-flex h-10 w-10 items-center justify-center rounded-full text-primary-foreground  hover:text-secondary'>
-              {/* SVG for Previous button */ }
+              {/* SVG for Previous button */}
               <ChevronLeft />
               <span className='sr-only'>Previous</span>
             </span>
           </Button>
-        ) }
-        {
-          images.map((image, index) => (
-            <div
-              key={ image.id }
-              className={ `p-0 ease-in-out items-center justify-between ${index === activeIndex ? 'block' : 'hidden'} inset-0 opacity-100 transition-opacity` }
+        )}
+        {images.map((image, index) => (
+          <div
+            key={image.id}
+            className={`items-center justify-between p-0 ease-in-out ${index === activeIndex ? 'block' : 'hidden'} inset-0 opacity-100 transition-opacity`}
+          >
+            <Image
+              src={image.imageUrl}
+              alt={currentTitle}
+              width={500}
+              height={500}
+              className='h-full w-full object-cover md:object-contain'
+            />
+            {/* Delete Button */}
+            <Button
+              type='button'
+              variant='rounded'
+              size='icon'
+              onClick={() => {
+                const isConfirmed = confirm(
+                  'Are you sure you want to delete this image?'
+                )
+                if (isConfirmed) {
+                  handleImageDelete()
+                }
+              }}
+              className='absolute bottom-0 right-6 rounded-full bg-red-600 p-1 text-white hover:bg-red-700 focus:outline-none'
+              aria-label='Delete Image'
             >
-              <Image
-                src={ image.imageUrl }
-                alt={ currentTitle }
-                width={ 500 }
-                height={ 500 }
-                className='object-cover w-full h-full md:object-contain'
-              />
-              {/* Delete Button */ }
-              <Button
-                type='button'
-                variant='rounded'
-                size='icon'
-                onClick={ () => {
-                  const isConfirmed = confirm('Are you sure you want to delete this image?');
-                  if (isConfirmed) {
-                    handleImageDelete()
-                  }
+              <TrashIcon className='h-6 w-6' />
+            </Button>
+          </div>
+        ))}
 
-                } }
-                className='absolute bottom-0 right-6 p-1 bg-red-600 text-white rounded-full hover:bg-red-700 focus:outline-none'
-                aria-label="Delete Image"
-              >
-                <TrashIcon className='w-6 h-6' />
-              </Button>
-            </div>
-          )
-          )
-
-        }
-
-
-        { useDoubleChevronRight ? (
+        {useDoubleChevronRight ? (
           <Button
             type='button'
             variant='rounded'
@@ -212,13 +205,13 @@ const ImageSlider = ({
             data-carousel-next
           >
             <Link
-              href={ `/?page=${page + 1}&limit=${limit}` }
-              prefetch={ true }
-              scroll={ false }
+              href={`/?page=${page + 1}&limit=${limit}`}
+              prefetch={true}
+              scroll={false}
               legacyBehavior
               passHref
             >
-              <a onClick={ () => setActiveIndex(0) }>
+              <a onClick={() => setActiveIndex(0)}>
                 <ChevronsRight />
               </a>
             </Link>
@@ -230,40 +223,37 @@ const ImageSlider = ({
             variant='rounded'
             size='icon'
             className='Z-30 absolute  right-7 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none'
-            disabled={ isLastImage }
-            onClick={ () => setActiveIndex((prevIndex) => prevIndex + 1) }
+            disabled={isLastImage}
+            onClick={() => setActiveIndex((prevIndex) => prevIndex + 1)}
             data-carousel-next
           >
             <span className='inline-flex h-10 w-10 items-center justify-center rounded-full text-primary-foreground hover:text-secondary '>
-              {/* SVG for Next button */ }
+              {/* SVG for Next button */}
               <ChevronRight />
               <span className='sr-only'>Next</span>
             </span>
           </Button>
-        ) }
-        {/* </div> */ }
+        )}
+        {/* </div> */}
       </CardContent>
 
       <CardFooter className='flex w-full flex-col'>
-        <Small className='text-right'>City: { currentCity }</Small>
+        <Small className='text-right'>City: {currentCity}</Small>
 
         <PaginationComponent
-          total={ totalImages }
-          setActiveIndex={ setActiveIndex }
-          searchParams={ { page: page, limit: limit } }
+          total={totalImages}
+          setActiveIndex={setActiveIndex}
+          searchParams={{ page: page, limit: limit }}
         />
-        {/* Description container */ }
+        {/* Description container */}
 
-
-
-        {/* Place ImageLinks here to show circles beneath the image */ }
+        {/* Place ImageLinks here to show circles beneath the image */}
         <ImageLinks
-          images={ images }
-          currentIndex={ activeIndex }
-          setCurrentIndex={ setActiveIndex }
+          images={images}
+          currentIndex={activeIndex}
+          setCurrentIndex={setActiveIndex}
         />
-        <Muted>Total Images: { totalImages }</Muted>
-
+        <Muted>Total Images: {totalImages}</Muted>
       </CardFooter>
     </Card>
   )
@@ -271,24 +261,23 @@ const ImageSlider = ({
 
 export default ImageSlider
 
-
 // Pagination component
 
-const PaginationComponent = ({ total, searchParams, setActiveIndex }: {
-  total: number,
+const PaginationComponent = ({
+  total,
+  searchParams,
+  setActiveIndex
+}: {
+  total: number
   searchParams: {
     [key: string]: string | string[] | number | undefined
-  },
+  }
   setActiveIndex: React.Dispatch<React.SetStateAction<number>>
 }) => {
-
-
-
   const page = searchParams.page ? parseInt(searchParams.page as string) : 1
 
   const limit =
     typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
-
 
   // const $skip = Number(searchParams?.get("$skip")) || 0
   // const $top = Number(searchParams?.get("$limit")) || 10
@@ -322,82 +311,70 @@ const PaginationComponent = ({ total, searchParams, setActiveIndex }: {
   }
   return (
     <Pagination>
-      <PaginationContent
-        className='justify-between w-1/2'
-      >
-        <PaginationItem
-          onClick={ () => setActiveIndex(0) }
-
-        >
-          {
-            canPageBackwards ? (
-              <PaginationPrevious href={ `/?page=${page - 1}&limit=${limit}` } />
-            ) : (
-              <PaginationLink
-                href={ `/?page=${totalPages}$limit${limit}` }
-                title='Go to last page'
-                id='goto-last-page'
-                legacyBehavior
-                prefetch={ true }
-                scroll={ false }
-                passHref
-              >
-                <ChevronsLeft />
-              </PaginationLink>
-            )
-
-          }
-        </PaginationItem>
-        { pageNumbers.map((pageNumber) => (
-          <PaginationItem key={ pageNumber }
-            onClick={ () => setActiveIndex(0) }
-            className={ pageNumber === currentPage ? 'text-primary underline' : '' }
-          >
+      <PaginationContent className='w-1/2 justify-between'>
+        <PaginationItem onClick={() => setActiveIndex(0)}>
+          {canPageBackwards ? (
+            <PaginationPrevious href={`/?page=${page - 1}&limit=${limit}`} />
+          ) : (
             <PaginationLink
-              href={ `/?page=${pageNumber}&limit=${limit}` }
-
+              href={`/?page=${totalPages}$limit${limit}`}
+              title='Go to last page'
+              id='goto-last-page'
               legacyBehavior
-              prefetch={ true }
-              scroll={ false }
+              prefetch={true}
+              scroll={false}
               passHref
             >
-              { pageNumber }
+              <ChevronsLeft />
+            </PaginationLink>
+          )}
+        </PaginationItem>
+        {pageNumbers.map((pageNumber) => (
+          <PaginationItem
+            key={pageNumber}
+            onClick={() => setActiveIndex(0)}
+            className={
+              pageNumber === currentPage ? 'text-primary underline' : ''
+            }
+          >
+            <PaginationLink
+              href={`/?page=${pageNumber}&limit=${limit}`}
+              legacyBehavior
+              prefetch={true}
+              scroll={false}
+              passHref
+            >
+              {pageNumber}
             </PaginationLink>
           </PaginationItem>
-        )) }
-        <PaginationItem
-          onClick={ () => setActiveIndex(0) }
-
-
-        >
-          { canPageForwards ? (
-            <PaginationNext href={ `/?page=${page + 1}&limit=${limit}` }
-              prefetch={ true }
-              scroll={ false }
+        ))}
+        <PaginationItem onClick={() => setActiveIndex(0)}>
+          {canPageForwards ? (
+            <PaginationNext
+              href={`/?page=${page + 1}&limit=${limit}`}
+              prefetch={true}
+              scroll={false}
               legacyBehavior
               passHref
             />
           ) : (
             <PaginationLink
-              href={ `/` }
+              href={`/`}
               title='Go to first page'
               id='goto-first-page'
               legacyBehavior
-              prefetch={ true }
-              scroll={ false }
+              prefetch={true}
+              scroll={false}
               passHref
             >
               <ChevronsRight />
             </PaginationLink>
-          )
-          }
+          )}
         </PaginationItem>
       </PaginationContent>
     </Pagination>
   )
 }
-
-
 
 type ImageLinkProps = {
   images: {
@@ -424,16 +401,16 @@ const ImageLinks = ({
 
   return (
     <div className='m-1 flex w-full items-center justify-center '>
-      {/* Render circles for each image */ }
-      { images.map((_, index) => (
+      {/* Render circles for each image */}
+      {images.map((_, index) => (
         <div
-          key={ index }
-          className={ `mx-1 h-4 w-4 rounded-full p-2 ${currentIndex === index ? 'bg-[#F53A87]' : 'bg-primary'
-            }` }
-          onClick={ () => setCurrentIndex(index) } // Navigate to the corresponding image
+          key={index}
+          className={`mx-1 h-4 w-4 rounded-full p-2 ${
+            currentIndex === index ? 'bg-[#F53A87]' : 'bg-primary'
+          }`}
+          onClick={() => setCurrentIndex(index)} // Navigate to the corresponding image
         />
-      )) }
+      ))}
     </div>
   )
 }
-
