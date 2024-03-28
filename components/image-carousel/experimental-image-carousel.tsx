@@ -8,11 +8,17 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  MoreVertical,
   TrashIcon
 } from 'lucide-react'
 import React from 'react'
 import EditableTextField from '../editable-text'
-import { deleteImage, editDescription, editTitle, likeImage } from '@/app/actions'
+import {
+  deleteImage,
+  editDescription,
+  editTitle,
+  likeImage
+} from '@/app/actions'
 import { Muted, Small } from '../ui/typography'
 import Link from 'next/link'
 import { Button } from '../ui/button'
@@ -34,6 +40,7 @@ import {
   PaginationPrevious
 } from '../ui/pagination'
 import ImageUserInteractionMenu from './image-user-interaction-menu'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 type ImageSliderProps = {
   images: {
     id: string
@@ -44,15 +51,11 @@ type ImageSliderProps = {
     city: string
     userId: string
     likes: {
-      photoId: string
       userId: string
-    },
-    _count: {
-      likes:number
-    }
-    user: {
-      role: string
-    }
+      photoId: string
+    }[]
+    likesCount: number
+    role: string
   }[]
   totalImages: number
   page: number
@@ -92,23 +95,16 @@ const ImageSlider = ({
     description: currentDescription,
     city: currentCity,
     userId: currentImageUserId,
-    _count: {
-      likes: currentLikesCount
-    },
+    likesCount: currentLikesCount,
     // I want likes as an array of objects
     likes: currentLikesArray
-
-
-
   } = images[activeIndex]
 
   const [numberOfLikes, setNumberOfLikes] = React.useState(currentLikesCount)
 
-
   React.useEffect(() => {
     setNumberOfLikes(currentLikesCount)
-  }, [currentLikesCount,currentImageId,activeIndex])
-
+  }, [currentLikesCount, currentImageId, activeIndex])
 
   const handleImageDelete = async () => {
     return await deleteImage(currentImageId)
@@ -120,9 +116,7 @@ const ImageSlider = ({
   }: {
     photoId: string
     userId: string
-
-    }) => {
-
+  }) => {
     const status = await likeImage(photoId, userId)
     if (status === 'added') {
       setNumberOfLikes((prev) => prev + 1)
@@ -130,9 +124,7 @@ const ImageSlider = ({
     if (status === 'removed') {
       setNumberOfLikes((prev) => prev - 1)
     }
-
   }
-
 
   return (
     <Card
@@ -219,24 +211,7 @@ const ImageSlider = ({
               height={500}
               className='h-full w-full object-cover md:object-contain'
             />
-            {/* Delete Button */}
-            <Button
-              type='button'
-              variant='rounded'
-              size='icon'
-              onClick={() => {
-                const isConfirmed = confirm(
-                  'Are you sure you want to delete this image?'
-                )
-                if (isConfirmed) {
-                  handleImageDelete()
-                }
-              }}
-              className='absolute bottom-0 right-6 rounded-full bg-red-600 p-1 text-white hover:bg-red-700 focus:outline-none'
-              aria-label='Delete Image'
-            >
-              <TrashIcon className='h-6 w-6' />
-            </Button>
+            <OwnerImageInteractionMenu handleImageDelete={handleImageDelete} />
           </div>
         ))}
 
@@ -282,15 +257,25 @@ const ImageSlider = ({
       </CardContent>
 
       <CardFooter className='flex w-full flex-col'>
-        <Small className='text-right'>City: {currentCity}</Small>
+        <Small className='text-right'>City: { currentCity }</Small>
+        <Link
+          href={ `/photos/${currentImageId}` } // Link to the user's profile
+          passHref
+        >
+           View Full Photo
+        </Link>
+
         <ImageUserInteractionMenu
-          currentImageId={ currentImageId }
-          likeCount={
-            numberOfLikes
+          currentImageId={currentImageId}
+          likeCount={numberOfLikes}
+          onLike={() =>
+            handleImageLike({
+              photoId: currentImageId,
+              userId: currentImageUserId
+            })
           }
-          onLike={() => handleImageLike({ photoId: currentImageId, userId: currentImageUserId })}
           onShare={() => console.log('Share')}
-          onFlag={ () => console.log('Flag') }
+          onFlag={() => console.log('Flag')}
         />
         <PaginationComponent
           total={totalImages}
@@ -437,9 +422,10 @@ type ImageLinkProps = {
     description: string
     city: string
     userId: string
-    user: {
-      role: string
-    }
+    likes: {
+      userId: string
+      photoId: string
+    }[]
   }[]
   currentIndex: number
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>
@@ -464,5 +450,46 @@ const ImageLinks = ({
         />
       ))}
     </div>
+  )
+}
+
+const OwnerImageInteractionMenu = ({
+  handleImageDelete
+}: {
+  handleImageDelete: () => void
+}) => {
+  return (
+    <Popover>
+      <PopoverTrigger
+        className='absolute right-7 top-2/3 z-50 rounded-full bg-primary/90 p-1 text-primary-foreground hover:bg-primary '
+        asChild
+      >
+        <Button type='button' variant='rounded' size='icon'>
+          <MoreVertical />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        align='center'
+        className='flex w-fit flex-col items-center justify-around'
+      >
+        <Button
+          type='button'
+          variant='rounded'
+          size='icon'
+          onClick={() => {
+            const isConfirmed = confirm(
+              'Are you sure you want to delete this image?'
+            )
+            if (isConfirmed) {
+              handleImageDelete()
+            }
+          }}
+          aria-label='Delete Image'
+        >
+          <TrashIcon className='h-6 w-6' />
+        </Button>
+        <Muted>Delete Image</Muted>
+      </PopoverContent>
+    </Popover>
   )
 }

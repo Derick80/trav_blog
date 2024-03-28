@@ -1,4 +1,4 @@
-import { getAllImages } from './actions'
+import { getAllImages, getCurrentUser } from './actions'
 import React from 'react'
 import { auth, currentUser } from '@clerk/nextjs'
 import { useUser } from '@/app/actions'
@@ -11,7 +11,10 @@ async function Home({
   searchParams: {
     [key: string]: string | string[] | undefined
   }
-}) {
+  }) {
+  const userRole = await getCurrentUser()
+  console.log(userRole, 'userRole');
+
   const page =
     typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
   const limit =
@@ -25,23 +28,26 @@ async function Home({
     return <div>No images found</div>
   }
 
-
   return (
     <div className='flex h-full w-full max-w-screen-md flex-col gap-1 py-2 md:gap-5'>
       {/* { me && <div className="absolute top-0 right-0 p-4 bg-white z-10">Welcome {me}</div>
       } */}
-      <ImageSlider
-        images={images}
-        totalImages={totalImages}
-        page={page}
-        limit={limit}
-      />
-      {/* <BaseImageSlider
-        images={images}
-        totalImages={totalImages}
-        page={page}
-        limit={ limit }
-      /> */}
+      {
+        userRole?.role === 'admin' ? (<ImageSlider
+          images={ images }
+          totalImages={ totalImages }
+          page={ page }
+          limit={ limit }
+        />) : (<BaseImageSlider
+          images={ images }
+          totalImages={ totalImages }
+          page={ page }
+            limit={ limit }
+          />)
+
+      }
+
+
     </div>
   )
 }

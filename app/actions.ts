@@ -16,7 +16,7 @@ export async function getAllImages({
   limit: number
 }) {
   const totalImages = await prisma.photos.count()
-  const images = await prisma.photos.findMany({
+  const retrieved = await prisma.photos.findMany({
     select: {
       id: true,
       cloudinaryPublicId: true,
@@ -24,15 +24,8 @@ export async function getAllImages({
       title: true,
       description: true,
       city: true,
-      flagged: true,
       userId: true,
-      likes: {
-        select: {
-          photoId: true,
-            userId: true
-        }
-
-      },
+      likes: true,
       _count: {
         select: {
           likes: true
@@ -51,10 +44,37 @@ export async function getAllImages({
     skip: (page - 1) * limit,
     take: limit
   })
+  const images = retrieved.map((image) => {
+    return {
+      id: image.id,
+      cloudinaryPublicId: image.cloudinaryPublicId,
+      imageUrl: image.imageUrl,
+      title: image.title,
+      description: image.description,
+      city: image.city,
+      userId: image.userId,
+      likes: image.likes
+        .map((like) => {
+          return {
+            photoId: like.photoId,
+            userId: like.userId
+          }
+        })
+        .flat(),
+      likesCount: image._count.likes,
+      role: image.user.role
+    }
+  })
   return { images, totalImages }
 }
 
-export async function hasLikedImage({ photoId, userId }: { photoId: string; userId: string }) {
+export async function hasLikedImage({
+  photoId,
+  userId
+}: {
+  photoId: string
+  userId: string
+}) {
   const like = await prisma.like.findUnique({
     where: {
       photoId_userId: {
@@ -103,7 +123,7 @@ export const deleteImage = async (id: string) => {
   }
 }
 
-export const likeImage = async (photoId: string,userId:string) => {
+export const likeImage = async (photoId: string, userId: string) => {
   const isLiked = await prisma.like.findUnique({
     where: {
       photoId_userId: {
@@ -119,10 +139,10 @@ export const likeImage = async (photoId: string,userId:string) => {
       where: {
         photoId_userId: {
           photoId,
-          userId,
-        },
-      },
-    });
+          userId
+        }
+      }
+    })
     revalidatePath('/')
     return 'removed'
   } else {
@@ -130,17 +150,16 @@ export const likeImage = async (photoId: string,userId:string) => {
     await prisma.like.create({
       data: {
         user: {
-          connect: { id: userId },
+          connect: { id: userId }
         },
         photo: {
-          connect: { id: photoId },
-        },
-      },
-    });
+          connect: { id: photoId }
+        }
+      }
+    })
     revalidatePath('/')
     return 'added'
   }
-
 }
 export async function editTitle({ id, title }: { id: string; title: string }) {
   const { userId } = auth()
@@ -209,6 +228,23 @@ export const useUser = async (userId: string) => {
       userName: true,
       role: true,
 
+      password: false
+    }
+  })
+  if (userProfile) return userProfile
+
+  throw new Error('User not found')
+}
+
+export const getCurrentUser = async () => {
+  const { userId } = auth()
+  if(!userId) return null
+  const userProfile = await prisma.user.findUnique({
+    where: {
+      id: userId
+    },
+    select: {
+      role: true,
       password: false
     }
   })

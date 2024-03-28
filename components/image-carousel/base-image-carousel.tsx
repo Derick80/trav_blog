@@ -33,18 +33,19 @@ import {
   PaginationPrevious
 } from '../ui/pagination'
 type BaseImageSliderProps = {
-  images: {
-    id: string
-    cloudinaryPublicId: string
-    imageUrl: string
-    title: string
-    description: string
-    city: string
-    userId: string
-    user: {
-      role: string
-    }
-  }[]
+    images: {
+        id: string
+        cloudinaryPublicId: string
+        imageUrl: string
+        title: string
+        description: string
+        city: string
+        userId: string
+        likes: {
+            userId: string
+            photoId: string
+        }[]
+    }[]
   totalImages: number
   page: number
   limit: number
@@ -198,7 +199,12 @@ const BaseImageSlider = ({
 
       <CardFooter className='flex w-full flex-col'>
         <Small className='text-right'>City: {currentCity}</Small>
-
+              <Link
+                  href={ `/photos/${currentImageId}` } // Link to the user's profile
+                  passHref
+              >
+                 View Full photo
+              </Link>
         <PaginationComponent
           total={totalImages}
           setActiveIndex={setActiveIndex}
@@ -337,18 +343,19 @@ const PaginationComponent = ({
 }
 
 type ImageLinkProps = {
-  images: {
-    id: string
-    cloudinaryPublicId: string
-    imageUrl: string
-    title: string
-    description: string
-    city: string
-    userId: string
-    user: {
-      role: string
-    }
-  }[]
+    images: {
+        id: string
+        cloudinaryPublicId: string
+        imageUrl: string
+        title: string
+        description: string
+        city: string
+        userId: string
+        likes: {
+            userId: string
+            photoId: string
+        }[]
+    }[]
   currentIndex: number
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>
 }
