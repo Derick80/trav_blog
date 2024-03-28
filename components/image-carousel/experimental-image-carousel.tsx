@@ -7,11 +7,12 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
-  ChevronsRight
+  ChevronsRight,
+  TrashIcon
 } from 'lucide-react'
 import React from 'react'
 import EditableTextField from '../editable-text'
-import { editDescription, editTitle } from '@/app/actions'
+import { deleteImage, editDescription, editTitle } from '@/app/actions'
 import { Muted, Small } from '../ui/typography'
 import Link from 'next/link'
 import { Button } from '../ui/button'
@@ -57,7 +58,6 @@ const ImageSlider = ({
 }: ImageSliderProps) => {
   const [activeIndex, setActiveIndex] = React.useState(0)
 
-
   // Calculate the current page and total pages
   const totalPageNumber = Math.ceil(totalImages / limit)
   // Determine if it's the first image of the first page
@@ -85,9 +85,13 @@ const ImageSlider = ({
     description: currentDescription,
     city: currentCity,
     userId: currentImageUserId,
-    ...otherImageProps
   } = images[activeIndex]
 
+
+  const handleImageDelete = async () => {
+    return await deleteImage(currentImageId)
+
+  }
 
   return (
     <Card
@@ -129,7 +133,7 @@ const ImageSlider = ({
             type='button'
             variant='rounded'
             size='icon'
-            className='Z-30 absolute left-7 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none'
+            className='z-30 absolute left-7 cursor-pointer items-center  justify-center bg-primary/50 hover:bg-primary/80 focus:outline-none'
             data-carousel-prev
           >
             <Link
@@ -175,6 +179,23 @@ const ImageSlider = ({
                 height={ 500 }
                 className='object-cover w-full h-full md:object-contain'
               />
+              {/* Delete Button */ }
+              <Button
+                type='button'
+                variant='rounded'
+                size='icon'
+                onClick={ () => {
+                  const isConfirmed = confirm('Are you sure you want to delete this image?');
+                  if (isConfirmed) {
+                    handleImageDelete()
+                  }
+
+                } }
+                className='absolute bottom-0 right-6 p-1 bg-red-600 text-white rounded-full hover:bg-red-700 focus:outline-none'
+                aria-label="Delete Image"
+              >
+                <TrashIcon className='w-6 h-6' />
+              </Button>
             </div>
           )
           )
@@ -267,7 +288,6 @@ const PaginationComponent = ({ total, searchParams, setActiveIndex }: {
 
   const limit =
     typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
-  console.log(page, 'page in pagination component');
 
 
   // const $skip = Number(searchParams?.get("$skip")) || 0

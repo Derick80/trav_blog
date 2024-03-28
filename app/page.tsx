@@ -38,18 +38,18 @@ async function Home({
     <div className='flex h-full w-full max-w-screen-md flex-col gap-1 py-2 md:gap-5'>
       {/* { me && <div className="absolute top-0 right-0 p-4 bg-white z-10">Welcome {me}</div>
       } */}
-      {/* <ImageSlider
+      <ImageSlider
         images={images}
         totalImages={totalImages}
         page={page}
         limit={limit}
-      /> */}
-      <BaseImageSlider
+      />
+      {/* <BaseImageSlider
         images={images}
         totalImages={totalImages}
         page={page}
         limit={ limit }
-      />
+      /> */}
     </div>
   )
 }

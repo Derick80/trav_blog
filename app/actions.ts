@@ -66,6 +66,17 @@ export const getImageById = async (id: string) => {
   return image
 }
 
+export const deleteImage = async (id: string) => {
+  const deleted = await prisma.photos.delete({
+    where: {
+      id
+    }
+  })
+  if (deleted) {
+    revalidatePath('/')
+    return deleted
+  }
+}
 export async function editTitle({ id, title }: { id: string; title: string }) {
   const { userId } = auth()
 
