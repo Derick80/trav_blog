@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import React from 'react'
 import EditableTextField from '../editable-text'
-import { deleteImage, editDescription, editTitle } from '@/app/actions'
+import { deleteImage, editDescription, editTitle, likeImage } from '@/app/actions'
 import { Muted, Small } from '../ui/typography'
 import Link from 'next/link'
 import { Button } from '../ui/button'
@@ -33,6 +33,7 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '../ui/pagination'
+import ImageUserInteractionMenu from './image-user-interaction-menu'
 type ImageSliderProps = {
   images: {
     id: string
@@ -42,6 +43,13 @@ type ImageSliderProps = {
     description: string
     city: string
     userId: string
+    likes: {
+      photoId: string
+      userId: string
+    },
+    _count: {
+      likes:number
+    }
     user: {
       role: string
     }
@@ -83,12 +91,48 @@ const ImageSlider = ({
     title: currentTitle,
     description: currentDescription,
     city: currentCity,
-    userId: currentImageUserId
+    userId: currentImageUserId,
+    _count: {
+      likes: currentLikesCount
+    },
+    // I want likes as an array of objects
+    likes: currentLikesArray
+
+
+
   } = images[activeIndex]
+
+  const [numberOfLikes, setNumberOfLikes] = React.useState(currentLikesCount)
+
+
+  React.useEffect(() => {
+    setNumberOfLikes(currentLikesCount)
+  }, [currentLikesCount,currentImageId,activeIndex])
+
 
   const handleImageDelete = async () => {
     return await deleteImage(currentImageId)
   }
+
+  const handleImageLike = async ({
+    photoId,
+    userId
+  }: {
+    photoId: string
+    userId: string
+
+    }) => {
+
+    const status = await likeImage(photoId, userId)
+    if (status === 'added') {
+      setNumberOfLikes((prev) => prev + 1)
+    }
+    if (status === 'removed') {
+      setNumberOfLikes((prev) => prev - 1)
+    }
+
+  }
+
 
   return (
     <Card
@@ -239,7 +283,15 @@ const ImageSlider = ({
 
       <CardFooter className='flex w-full flex-col'>
         <Small className='text-right'>City: {currentCity}</Small>
-
+        <ImageUserInteractionMenu
+          currentImageId={ currentImageId }
+          likeCount={
+            numberOfLikes
+          }
+          onLike={() => handleImageLike({ photoId: currentImageId, userId: currentImageUserId })}
+          onShare={() => console.log('Share')}
+          onFlag={ () => console.log('Flag') }
+        />
         <PaginationComponent
           total={totalImages}
           setActiveIndex={setActiveIndex}

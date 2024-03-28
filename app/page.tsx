@@ -1,6 +1,5 @@
 import { getAllImages } from './actions'
 import React from 'react'
-import { H3, Small } from '@/components/ui/typography'
 import { auth, currentUser } from '@clerk/nextjs'
 import { useUser } from '@/app/actions'
 import ImageSlider from '@/components/image-carousel/experimental-image-carousel'
@@ -26,13 +25,6 @@ async function Home({
     return <div>No images found</div>
   }
 
-  // Calculate total number of pages
-  const totalPages = Math.ceil(totalImages / limit)
-
-  // Generate pagination links
-  const visiblePages = 3 // Number of visible pages
-  const startPage = Math.max(1, page - Math.floor(visiblePages / 2))
-  const endPage = Math.min(totalPages, startPage + visiblePages - 1)
 
   return (
     <div className='flex h-full w-full max-w-screen-md flex-col gap-1 py-2 md:gap-5'>

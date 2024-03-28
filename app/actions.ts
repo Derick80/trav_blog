@@ -26,6 +26,18 @@ export async function getAllImages({
       city: true,
       flagged: true,
       userId: true,
+      likes: {
+        select: {
+          photoId: true,
+            userId: true
+        }
+
+      },
+      _count: {
+        select: {
+          likes: true
+        }
+      },
       user: {
         select: {
           role: true
@@ -41,6 +53,19 @@ export async function getAllImages({
   })
   return { images, totalImages }
 }
+
+export async function hasLikedImage({ photoId, userId }: { photoId: string; userId: string }) {
+  const like = await prisma.like.findUnique({
+    where: {
+      photoId_userId: {
+        photoId,
+        userId
+      }
+    }
+  })
+  return like
+}
+
 export const getImageById = async (id: string) => {
   const image = await prisma.photos.findUnique({
     where: {
@@ -76,6 +101,46 @@ export const deleteImage = async (id: string) => {
     revalidatePath('/')
     return deleted
   }
+}
+
+export const likeImage = async (photoId: string,userId:string) => {
+  const isLiked = await prisma.like.findUnique({
+    where: {
+      photoId_userId: {
+        photoId,
+        userId
+      }
+    }
+  })
+
+  if (isLiked) {
+    // Like exists, so unlike the photo by deleting the like entry
+    await prisma.like.delete({
+      where: {
+        photoId_userId: {
+          photoId,
+          userId,
+        },
+      },
+    });
+    revalidatePath('/')
+    return 'removed'
+  } else {
+    // Like does not exist, so like the photo by creating a new like entry
+    await prisma.like.create({
+      data: {
+        user: {
+          connect: { id: userId },
+        },
+        photo: {
+          connect: { id: photoId },
+        },
+      },
+    });
+    revalidatePath('/')
+    return 'added'
+  }
+
 }
 export async function editTitle({ id, title }: { id: string; title: string }) {
   const { userId } = auth()
