@@ -4,6 +4,7 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  CompassIcon,
   InfoIcon,
   LocateFixed,
   ShareIcon,
@@ -14,7 +15,7 @@ import React from 'react'
 import { Muted, Small } from '../ui/typography'
 import { Button } from '../ui/button'
 import Link from 'next/link'
-import { likeImage } from '@/app/actions'
+import { editCity, editDescription, editTitle, likeImage } from '@/app/actions'
 import { ShareImageButton } from './share-button'
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious } from '../ui/pagination'
 import {
@@ -23,13 +24,17 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '../ui/tooltip'
-const GridCarousel = ({
+import EditableTextField from '../editable-text'
+
+const ImageGallerySlider = ({
   images,
   totalImages,
-  page
+    page,
+  role
 }: {
   totalImages: number
-  page: number
+        page: number
+    role: string
   images: {
     id: string
     cloudinaryPublicId: string
@@ -43,7 +48,8 @@ const GridCarousel = ({
       photoId: string
     }[]
   }[]
-}) => {
+    }) => {
+
   const limit = 10
   const [currentIndex, setCurrentIndex] = React.useState(0)
     const [likeCount, setLikeCount] = React.useState(images[currentIndex].likes.length)
@@ -76,11 +82,26 @@ const GridCarousel = ({
     )
   }
   return (
-    <div className='flex h-full  w-96 md:w-[500px] flex-col'>
-          <Muted
-          className='text-left'
-          >{ images[currentIndex].title }</Muted>
-      <div className='relative h-[225px] md:h-[500px] w-[350px] md:w-[500px] mx-auto'>
+      <div className='flex h-full  w-96 md:w-[500px] flex-col'>
+          {
+                role === 'admin' ? (
+                  <EditableTextField
+                      initialValue={ images[currentIndex].title }
+                      className='text-muted-foreground italic '
+                      onUpdate={ (value) => {
+                          editTitle({ id: images[currentIndex].id, title: value })
+
+                      } }
+                  />
+
+                ) : (
+                      <Muted
+                          className='text-left h-fit min-h-12 max-h-12 flex items-end'
+                      >{ images[currentIndex].title }</Muted>
+                )
+         }
+
+      <div className='relative h-[225px] md:h-[500px] w-96 md:w-[500px] mx-auto'>
         <div className='absolute inset-0'>
           {images.map((image, index) => (
             <div
@@ -93,7 +114,9 @@ const GridCarousel = ({
                 alt={images[currentIndex].title}
                 // width={ 300 }
                 // height={ 225 }
-                fill={true}
+
+                      fill={ true }
+                      sizes={ '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw' }
                 className='rounded-md object-cover'
                 style={{
                   zIndex: images.length - index,
@@ -296,20 +319,54 @@ const GridCarousel = ({
                     </PaginationContent>
             </Pagination>
 
-        <div className='flex items-center gap-1 md:gap-4 justify-center w-full'>
-              <Muted className=''>
-                  { images[currentIndex].description }</Muted>
-              <LocateFixed /> :
-              <Muted
-                  className=''
-              >
-                    { images[currentIndex].city }</Muted>
+        <div className='flex mt-2 flex-col items-cesnter gap-1 md:gap-4 justify-center w-full'>
+              {
+                  role === 'admin' ? (
+                      <>
+                          <EditableTextField
+                              initialValue={ images[currentIndex].description }
+                              className=''
+                              onUpdate={ (value) => {
+                                  editDescription({ id: images[currentIndex].id, description: value })
+
+                              } }
+                          />
+                          <div
+                            className='flex items-center justify-center gap-1'>
+                           <CompassIcon />
+                          <EditableTextField
+                                initialValue={ images[currentIndex].city }
+                                className=''
+                                onUpdate={ (value) => {
+                                    editCity({ id: images[currentIndex].id, city: value })
+
+                                } }
+                              />
+                              </div>
+
+                      </>
+
+
+                  ) : (
+                            <><Muted
+                              className='text-left'
+                          >{ images[currentIndex].description }</Muted>
+
+                              <div
+                                    className='flex items-center justify-center gap-1'>
+                                    <LocateFixed />
+                                  <Muted>{ images[currentIndex].city }</Muted>
+                                </div>
+                             </>
+                    )
+             }
+
               </div>
     </div>
   )
 }
 
-export default GridCarousel
+export default ImageGallerySlider
 
 
 

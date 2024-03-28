@@ -7,8 +7,10 @@ import BaseImageSlider from '@/components/image-carousel/base-image-carousel'
 
 import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import Gridcarousel from '@/components/image-carousel/grid-images'
+import ImageGallerySlider from '@/components/image-carousel/grid-images'
 import { H2, H3 } from '@/components/ui/typography'
+import { Separator } from '@/components/ui/separator'
+import ImageCarouselFeatures from '@/components/image-carousel/image-slider-about'
 
 async function Home({
   searchParams
@@ -34,107 +36,22 @@ async function Home({
   }
 
   return (
-    <div className='flex flex-col items-center justify-center'>
+    <div className='flex flex-col gap-10 justify-center'>
       <H2>Image Carousel</H2>
-      <H3>Grid Carousel</H3>
-      <Gridcarousel totalImages={totalImages} page={page} images={images} />
-      {userRole?.role === 'admin' ? (
-        <ImageSlider
-          images={images}
-          totalImages={totalImages}
-          page={page}
-          limit={limit}
-        />
-      ) : (
-        <BaseImageSlider
-          images={images}
-          totalImages={totalImages}
-          page={page}
-          limit={limit}
-        />
-      )}
+
+
+      <ImageGallerySlider
+      role={ userRole?.role || 'user'}
+        totalImages={ totalImages } page={ page } images={ images } />
+
       <div>
-        {/* { images.map((image) => (
-          <Gridcarousel
-            key={ image.id }
-            images={ [image] }
-          />
-        )
-        )} */}
+        <Separator />
+        <ImageCarouselFeatures
+        />
       </div>
+
     </div>
   )
 }
 
 export default Home
-
-// const Gridcarousel = ({ images }: {
-//   images: {
-//     id: string
-//     cloudinaryPublicId: string
-//     imageUrl: string
-//     title: string
-//     description: string
-//     city: string
-//     userId: string
-//     likes: {
-//       userId: string
-//       photoId: string
-//     }[]
-//   }[]
-
-// }) => {
-//   const [currentIndex, setCurrentIndex] = React.useState(0);
-
-//   const showNextImage = () => {
-//     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-//   };
-
-//   const showPreviousImage = () => {
-//     setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
-//   };
-//   return (
-//     <div className="relative w-[300px] h-[225px]">
-
-//       <div className="absolute inset-0">
-
-//       { images.map((image,index) => (
-//         <div
-//           className="absolute top-0 left-0 w-full h-[225px]"
-//           style={ { zIndex: images.length - index } }
-//           key={ image.id }>
-
-//           <Image
-//             src={ image.imageUrl }
-//             alt={ image.title }
-//             // width={ 300 }
-//             // height={ 225 }
-//             fill={ true }
-//             className="rounded-md"
-//             style={ {
-//               zIndex: images.length - index,
-//               objectFit: "cover",
-//             } } // Ensure proper stacking order
-
-//           />
-//         </div>
-
-//       )) }
-//       </div>
-//       <button
-//         className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-1 rounded-full z-20"
-//         onClick={ showPreviousImage}
-//       >
-//         <ChevronLeft className="w-6 h-6 text-black" />
-//       </button>
-//       <button
-//         className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-1 rounded-full z-20"
-//         onClick={ showNextImage }
-//       >
-
-//         <ChevronRight className="w-6 h-6 text-black" />
-//       </button>
-
-//     </div >
-//   )
-// }

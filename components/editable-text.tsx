@@ -1,6 +1,7 @@
 import React from 'react'
 import { Input } from './ui/input'
 import { cn } from '@/lib/utils'
+import { Textarea } from './ui/textarea'
 
 type EditableTextFieldProps = {
   initialValue?: string
@@ -24,12 +25,12 @@ const EditableTextField = ({
     setValue(initialValue)
   }, [initialValue])
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(event.target.value)
     updateInitialValue && updateInitialValue(event.target.value)
   }
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter') {
       setIsEditing(false)
       onUpdate && value && onUpdate(value)
@@ -44,15 +45,14 @@ const EditableTextField = ({
   return (
     <>
       {isEditing ? (
-        <Input
-          type='text'
+        <Textarea
           value={value}
-          onChange={handleInputChange}
+          onChange={ handleInputChange }
           onKeyDown={handleKeyPress}
           onBlur={() => setIsEditing(false)}
           autoFocus
           className={cn(
-            'h-10 w-full cursor-text focus:border-blue-500',
+            'h-12 w-full cursor-text focus:border-blue-500 focus:z-50',
             className
           )}
         />
@@ -66,7 +66,7 @@ const EditableTextField = ({
           <div
             onClick={handleDoubleClick}
             className={cn(
-              'h-10 w-full cursor-text focus:border-blue-500',
+              'h-fit max-h-12 w-full  cursor-text',
               className
             )}
           >
