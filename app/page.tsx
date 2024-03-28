@@ -4,6 +4,7 @@ import { H3, Small } from '@/components/ui/typography'
 import { auth, currentUser } from '@clerk/nextjs'
 import { useUser } from '@/app/actions'
 import ImageSlider from '@/components/image-carousel/experimental-image-carousel'
+import BaseImageSlider from '@/components/image-carousel/base-image-carousel'
 
 async function Home({
   searchParams
@@ -37,11 +38,17 @@ async function Home({
     <div className='flex h-full w-full max-w-screen-md flex-col gap-1 py-2 md:gap-5'>
       {/* { me && <div className="absolute top-0 right-0 p-4 bg-white z-10">Welcome {me}</div>
       } */}
-      <ImageSlider
+      {/* <ImageSlider
         images={images}
         totalImages={totalImages}
         page={page}
         limit={limit}
+      /> */}
+      <BaseImageSlider
+        images={images}
+        totalImages={totalImages}
+        page={page}
+        limit={ limit }
       />
     </div>
   )
