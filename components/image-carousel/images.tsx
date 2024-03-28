@@ -1,5 +1,6 @@
 import { type TransformerOption } from '@cld-apis/types'
 import { buildImageUrl, setConfig } from 'cloudinary-build-url'
+import clsx from 'clsx'
 import { type CSSProperties } from 'react'
 
 setConfig({
@@ -48,16 +49,25 @@ const getImgProps = (
   {
     widths,
     sizes,
-    transformations
+    transformations,
+    className,
+    style
   }: {
     widths: Array<number>
     sizes: Array<string>
     transformations?: TransformerOption
+    className?: string
+    style?: CSSProperties
   }
 ) => {
   const averageSize = Math.ceil(widths.reduce((a, s) => a + s) / widths.length)
 
   return {
+    style: {
+      ...imageBuilder.style,
+      ...style
+    },
+    className: clsx(imageBuilder.className, className),
     alt: imageBuilder.alt,
     src: imageBuilder({
       quality: 'auto',
@@ -78,7 +88,14 @@ const getImgProps = (
         ].join(' ')
       )
       .join(', '),
-    sizes: sizes.join(', ')
-  }
+    sizes: sizes.join(', '),
+    crossOrigin: 'anonymous'
+  } as const
 }
+
+// cloudinary needs double-encoding
+function doubleEncode(s: string) {
+  return encodeURIComponent(encodeURIComponent(s))
+}
+
 export { getImgProps, createImages, getImageBuilder }

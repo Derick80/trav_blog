@@ -1,11 +1,16 @@
-import { getAllImages } from './actions'
+import { getAllImages, getCurrentUser } from './actions'
 import React from 'react'
-import ImageCarousel from '@/components/image-carousel/edit-image-carousel'
-import { H3, Small } from '@/components/ui/typography'
-import { currentUser } from '@clerk/nextjs'
+import { auth, currentUser } from '@clerk/nextjs'
 import { useUser } from '@/app/actions'
+import ImageSlider from '@/components/image-carousel/experimental-image-carousel'
+import BaseImageSlider from '@/components/image-carousel/base-image-carousel'
 
-
+import Image from 'next/image'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import ImageGallerySlider from '@/components/image-carousel/grid-images'
+import { H2, H3 } from '@/components/ui/typography'
+import { Separator } from '@/components/ui/separator'
+import ImageCarouselFeatures from '@/components/image-carousel/image-slider-about'
 
 async function Home({
   searchParams
@@ -13,16 +18,12 @@ async function Home({
   searchParams: {
     [key: string]: string | string[] | undefined
   }
-  }) {
+}) {
+  const userRole = await getCurrentUser()
+  console.log(userRole, 'userRole')
 
-    const user = await currentUser() || null
-
-  const userProfile =await useUser(user?.id || '')
-  console.log(userProfile, 'userProfile');
-
-  const isAdmin = userProfile?.role === 'admin'
-
-  const page =    typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
+  const page =
+    typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
   const limit =
     typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
 
@@ -34,30 +35,21 @@ async function Home({
     return <div>No images found</div>
   }
 
-  // Calculate total number of pages
-  const totalPages = Math.ceil(totalImages / limit)
-
-  // Generate pagination links
-  const visiblePages = 3 // Number of visible pages
-  const startPage = Math.max(1, page - Math.floor(visiblePages / 2))
-  const endPage = Math.min(totalPages, startPage + visiblePages - 1)
-
   return (
-    <div className="flex w-full flex-col gap-5 py-2">
-      {/* { me && <div className="absolute top-0 right-0 p-4 bg-white z-10">Welcome {me}</div>
-      } */}
-      <div className="flex flex-col items-center ">
-        <H3>Progress Notes</H3>
-        <Small>View and edit your progress notes</Small>
+    <div className='flex flex-col gap-10 justify-center'>
+      <H2>Image Carousel</H2>
+
+
+      <ImageGallerySlider
+      role={ userRole?.role || 'user'}
+        totalImages={ totalImages } page={ page } images={ images } />
+
+      <div>
+        <Separator />
+        <ImageCarouselFeatures
+        />
       </div>
-      <ImageCarousel
-        isAdmin={isAdmin}
-        images={images}
-        totalImages={totalImages}
-        searchParams={searchParams}
-        startPage={startPage}
-        endPage={endPage}
-      />
+
     </div>
   )
 }

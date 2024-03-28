@@ -23,12 +23,14 @@ model User {
   sessions          Session[]
   VerificationToken VerificationToken[]
   accounts          Account[]
+  likes             Like[]
 }
 
 model UserImages {
   id                 String   @id @unique @default(uuid())
   cloudinaryPublicId String?  @unique
   imageUrl           String
+  flagged            Boolean? @default(false)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -61,10 +63,12 @@ model Photos {
   city               String   @default("Unknown")
   description        String   @default("No description")
   title              String   @default("No title")
+  flagged            Boolean? @default(false)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId             String
+  likes              Like[]
 }
 
 model Session {
@@ -84,4 +88,18 @@ model VerificationToken {
   userId  String
 
   @@unique([token, id])
+}
+
+model Like {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId    String
+  photo     Photos   @relation(fields: [photoId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  photoId   String
+
+  @@id([photoId, userId])
+  @@index([photoId, userId])
+  @@index([photoId])
+  @@index([userId])
 }
