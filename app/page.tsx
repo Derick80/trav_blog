@@ -36,20 +36,20 @@ async function Home({
   }
 
   return (
-    <div className='flex flex-col gap-10 justify-center'>
+    <div className='flex flex-col justify-center gap-10'>
       <H2>Image Carousel</H2>
 
-
       <ImageGallerySlider
-      role={ userRole?.role || 'user'}
-        totalImages={ totalImages } page={ page } images={ images } />
+        role={userRole?.role || 'user'}
+        totalImages={totalImages}
+        page={page}
+        images={images}
+      />
 
       <div>
         <Separator />
-        <ImageCarouselFeatures
-        />
+        <ImageCarouselFeatures />
       </div>
-
     </div>
   )
 }

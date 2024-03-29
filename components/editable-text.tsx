@@ -3,7 +3,12 @@ import { Input } from './ui/input'
 import { cn } from '@/lib/utils'
 import { Textarea } from './ui/textarea'
 import { PencilIcon } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from './ui/tooltip'
 import clsx from 'clsx'
 
 type EditableTextFieldProps = {
@@ -50,50 +55,47 @@ const EditableTextField = ({
       {isEditing ? (
         <Textarea
           value={value}
-          onChange={ handleInputChange }
+          onChange={handleInputChange}
           onKeyDown={handleKeyPress}
           onBlur={() => setIsEditing(false)}
           autoFocus
-          className={ clsx(
-            'mt-1 h-12 w-full cursor-text focus:border-blue-500 focus:z-50 transition-opacity duration-1000 ease-in-out',
-            'opacity-100 scale-100', // Ensure full opacity and scale when editing
-          ) }
+          className={clsx(
+            'mt-1 h-12 w-full cursor-text transition-opacity duration-1000 ease-in-out focus:z-50 focus:border-blue-500',
+            'scale-100 opacity-100' // Ensure full opacity and scale when editing
+          )}
         />
       ) : (
-          <div
-          className='flex w-full justify-between pr-1 pl-1'
-          >
+        <div className='flex w-full justify-between pl-1 pr-1'>
           {label && ( // Conditionally render label if provided
             <div className='mr-2 text-sm font-medium text-gray-700'>
               {label}
             </div>
-            ) }
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger
-                className='w-full'
+          )}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className='w-full'>
+                <div
+                  onClick={handleDoubleClick}
+                  className={clsx(
+                    'flex w-full cursor-text items-center justify-between',
+                    'transition-opacity duration-300 ease-in-out',
+                    {
+                      'opacity-100': !isEditing,
+                      'scale-95 opacity-0': isEditing // Apply scale and opacity transition when editing
+                    }
+                  )}
                 >
-                  <div
-                    onClick={ handleDoubleClick }
-                    className={ clsx(
-                      'flex items-center justify-between w-full cursor-text',
-                      'transition-opacity duration-300 ease-in-out',
-                      {
-                        'opacity-100': !isEditing,
-                        'opacity-0 scale-95': isEditing, // Apply scale and opacity transition when editing
-                      }
-                    ) }
-                  >
-                    <span>{ value ? value : 'Double click to edit' }</span>
-                    <PencilIcon className="h-4 w-4 text-gray-500" />
-                  </div>
-                  <TooltipContent>
-                    <span className='text-sm text-gray-500'>Double click to edit</span>
-                 </TooltipContent>
-                  </TooltipTrigger>
-              </Tooltip>
-            </TooltipProvider>
-
+                  <span>{value ? value : 'Double click to edit'}</span>
+                  <PencilIcon className='h-4 w-4 text-gray-500' />
+                </div>
+                <TooltipContent>
+                  <span className='text-sm text-gray-500'>
+                    Double click to edit
+                  </span>
+                </TooltipContent>
+              </TooltipTrigger>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       )}
     </>
