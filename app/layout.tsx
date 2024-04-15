@@ -8,6 +8,7 @@ import { getServerSession } from 'next-auth'
 import NavMenu from '@/components/top-navigation'
 import { ClerkProvider } from '@clerk/nextjs'
 import React from 'react'
+import { TooltipProvider } from '@/components/ui/tooltip'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -22,21 +23,23 @@ export default async function RootLayout(props: {
 }) {
   return (
     <ClerkProvider>
+      <TooltipProvider>
       <html lang='en'>
         <body
           className={cn(
-            'flex min-h-screen w-full min-w-full  flex-col border   border-black bg-background antialiased',
+            'flex min-h-screen w-full min-w-full  flex-col  bg-background antialiased',
             inter.className
           )}
         >
           <NavMenu />
-          <main className='flex flex-grow flex-col items-center border-2 border-teal-400 p-1 md:p-5'>
+          <main className='flex flex-grow flex-col items-center  p-1 md:p-5'>
             {props.children}
             {props.modal}
           </main>
           <div id='modal-root' />
         </body>
       </html>
+      </TooltipProvider>
     </ClerkProvider>
   )
 }

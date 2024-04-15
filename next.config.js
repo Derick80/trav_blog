@@ -1,11 +1,9 @@
-
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  pageExtensions: [ 'js', 'jsx', 'mdx', 'ts', 'tsx' ],
+  pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   experimental: {
-  mdxRs: true
-},
+    mdxRs: true
+  },
   images: {
     remotePatterns: [
       {
@@ -17,10 +15,15 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'japan2023.s3.us-east-2.amazonaws.com',
         port: ''
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.clerk.com',
+        port: ''
       }
     ]
   }
 }
 
-const withMDX = require( "@next/mdx" )();
-module.exports = withMDX( nextConfig );
+const withMDX = require('@next/mdx')()
+module.exports = withMDX(nextConfig)

@@ -1,14 +1,7 @@
 import { getAllImages, getCurrentUser } from './actions'
 import React from 'react'
-import { auth, currentUser } from '@clerk/nextjs'
-import { useUser } from '@/app/actions'
-import ImageSlider from '@/components/image-carousel/experimental-image-carousel'
-import BaseImageSlider from '@/components/image-carousel/base-image-carousel'
-
-import Image from 'next/image'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import ImageGallerySlider from '@/components/image-carousel/grid-images'
-import { H2, H3 } from '@/components/ui/typography'
+import { H2 } from '@/components/ui/typography'
 import { Separator } from '@/components/ui/separator'
 import ImageCarouselFeatures from '@/components/image-carousel/image-slider-about'
 
@@ -20,7 +13,6 @@ async function Home({
   }
 }) {
   const userRole = await getCurrentUser()
-  console.log(userRole, 'userRole')
 
   const page =
     typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
@@ -36,20 +28,22 @@ async function Home({
   }
 
   return (
-    <div className='flex flex-col gap-10 justify-center'>
-      <H2>Image Carousel</H2>
-
+    <div className='flex flex-col justify-center gap-10'>
+      <H2>
+        <span className='text-3xl'>Image Gallery</span>
+      </H2>
 
       <ImageGallerySlider
-      role={ userRole?.role || 'user'}
-        totalImages={ totalImages } page={ page } images={ images } />
+        role={userRole?.role || 'user'}
+        totalImages={totalImages}
+        page={page}
+        images={images}
+      />
 
       <div>
         <Separator />
-        <ImageCarouselFeatures
-        />
+        <ImageCarouselFeatures />
       </div>
-
     </div>
   )
 }

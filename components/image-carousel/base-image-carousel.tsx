@@ -10,8 +10,6 @@ import {
   ChevronsRight
 } from 'lucide-react'
 import React from 'react'
-import EditableTextField from '../editable-text'
-import { editDescription, editTitle } from '@/app/actions'
 import { Muted, Small } from '../ui/typography'
 import Link from 'next/link'
 import { Button } from '../ui/button'
