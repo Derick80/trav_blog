@@ -2,9 +2,6 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils'
-
-import Link from 'next/link'
-import { getServerSession } from 'next-auth'
 import NavMenu from '@/components/top-navigation'
 import { ClerkProvider } from '@clerk/nextjs'
 import React from 'react'
@@ -13,8 +10,8 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Image Gallery with Next.js App router',
-  description: 'An image gallery with Next.js App router'
+  title: 'Travel Image Gallery',
+  description: 'An image gallery that uses the Next.js App router'
 }
 
 export default async function RootLayout(props: {

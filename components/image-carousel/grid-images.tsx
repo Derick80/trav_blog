@@ -138,13 +138,12 @@ const ImageGallerySlider = ({
           className='absolute -bottom-6 left-0 right-0 z-30 flex items-center justify-between p-2'
           style={{ backdropFilter: 'blur(4px)' }}
         >
-            <Tooltip>
-            <TooltipTrigger>
+
               <Button
                 type='button'
                 variant='ghost'
                 size='icon'
-                className='rounded-full bg-primary/70 p-1 hover:bg-primary/30'
+                className=' rounded-full bg-primary/70 p-1 hover:bg-primary/30'
                 onClick={ () => {
                   likeImage(images[currentIndex].id, images[currentIndex].userId)
                 } }
@@ -152,15 +151,11 @@ const ImageGallerySlider = ({
               >
                 <ThumbsUp className='h-4 w-4 text-primary-foreground' />
               </Button>
-              <span className='absolute bottom-0 right-0 translate-x-1/3 translate-y-1/2 rounded-full bg-white px-2 py-1 text-xs text-primary'>
-                { likeCount }
-              </span>
 
-              </TooltipTrigger>
-              <TooltipContent>
-               login to like
-              </TooltipContent>
-            </Tooltip>
+          <span className='absolute bottom-0  translate-x-6 translate-y-1/3 rounded-full bg-white px-2 py-1 text-xs text-primary'>
+            { likeCount }
+          </span>
+
           <div className='flex items-center gap-1'>
             <LocateFixed />
             <Small>{ images[currentIndex].city }</Small>
