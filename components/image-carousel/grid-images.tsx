@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
-import { Muted, Small } from '../ui/typography'
+import { Caption, Muted, Small } from '../ui/typography'
 import { Button } from '../ui/button'
 import Link from 'next/link'
 import { editCity, editDescription, editTitle, likeImage } from '@/app/actions'
@@ -31,6 +31,7 @@ import {
   TooltipTrigger
 } from '../ui/tooltip'
 import EditableTextField from '../editable-text'
+import { useUser } from '@clerk/nextjs'
 
 const ImageGallerySlider = ({
   images,
@@ -54,7 +55,10 @@ const ImageGallerySlider = ({
       photoId: string
     }[]
   }[]
-}) => {
+  }) => {
+  const { isSignedIn, user, isLoaded } = useUser()
+  console.log(user, 'user from image-user-interaction-menu useUser');
+
   const limit = 10
   const [currentIndex, setCurrentIndex] = React.useState(0)
   const [likeCount, setLikeCount] = React.useState(
@@ -134,97 +138,132 @@ const ImageGallerySlider = ({
           className='absolute -bottom-6 left-0 right-0 z-30 flex items-center justify-between p-2'
           style={{ backdropFilter: 'blur(4px)' }}
         >
-          <div className='relative flex items-center justify-center'>
-            <Button
-              type='button'
-              variant='ghost'
-              size='icon'
-              className='rounded-full bg-primary/70 p-1 hover:bg-primary/30'
-              onClick={() => {
-                likeImage(images[currentIndex].id, images[currentIndex].userId)
-              }}
-            >
-              <ThumbsUp className='h-4 w-4 text-primary-foreground' />
-            </Button>
-            <span className='absolute bottom-0 right-0 translate-x-1/3 translate-y-1/2 rounded-full bg-white px-2 py-1 text-xs text-primary'>
-              {likeCount}
-            </span>
+            <Tooltip>
+            <TooltipTrigger>
+              <Button
+                type='button'
+                variant='ghost'
+                size='icon'
+                className='rounded-full bg-primary/70 p-1 hover:bg-primary/30'
+                onClick={ () => {
+                  likeImage(images[currentIndex].id, images[currentIndex].userId)
+                } }
+                disabled={ !isSignedIn }
+              >
+                <ThumbsUp className='h-4 w-4 text-primary-foreground' />
+              </Button>
+              <span className='absolute bottom-0 right-0 translate-x-1/3 translate-y-1/2 rounded-full bg-white px-2 py-1 text-xs text-primary'>
+                { likeCount }
+              </span>
+
+              </TooltipTrigger>
+              <TooltipContent>
+               login to like
+              </TooltipContent>
+            </Tooltip>
+          <div className='flex items-center gap-1'>
+            <LocateFixed />
+            <Small>{ images[currentIndex].city }</Small>
+
           </div>
-          <Link
-            href={`/photos/${images[currentIndex].id}`} // Link to the user's profile
-            passHref
-            className='rounded-full bg-primary/70 p-1 text-primary-foreground hover:bg-primary/30'
-          >
-            View Full Photo
-          </Link>
           <ShareImageButton id={images[currentIndex].id} />
         </div>
+        {/* end of overlay bar */ }
 
         {page > 1 && currentIndex === 0 ? (
-          <Button
-            type='button'
-            variant='ghost'
-            size='icon'
-            className='absolute left-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-md rounded-r-none  bg-primary/20 p-1 hover:bg-primary/80'
-            onClick={() => setCurrentIndex(images.length - 1)}
-            disabled={isFirstImage}
-          >
-            <Link
-              href={`/?page=${page - 1}&limit=${limit}`}
-              prefetch={true}
-              scroll={false}
-              legacyBehavior
-              passHref
-            >
-              <a>
-                <ChevronsLeft className='h-6 w-6 text-primary-foreground' />
-              </a>
-            </Link>
-          </Button>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                type='button'
+                variant='ghost'
+                size='icon'
+                className='absolute left-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-md rounded-r-none  bg-primary/20 p-1 hover:bg-primary/80'
+                onClick={ () => setCurrentIndex(images.length - 1) }
+                disabled={ isFirstImage }
+              >
+                <Link
+                  href={ `/?page=${page - 1}&limit=${limit}` }
+                  prefetch={ true }
+                  scroll={ false }
+                  legacyBehavior
+                  passHref
+                >
+                  <a>
+                    <ChevronsLeft className='h-6 w-6 text-primary-foreground' />
+                  </a>
+                </Link>
+              </Button>
+
+            </TooltipTrigger>
+            <TooltipContent>
+              Go to the previous page
+            </TooltipContent>
+          </Tooltip>
         ) : (
-          <Button
-            type='button'
-            variant='ghost'
-            size='icon'
-            className='absolute left-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-full bg-primary/20 p-1 hover:bg-primary/80'
-            onClick={showPreviousImage}
-            disabled={isFirstImage}
-          >
-            <ChevronLeft className='h-6 w-6 text-primary-foreground ' />
-          </Button>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon'
+                  className='absolute left-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-full bg-primary/20 p-1 hover:bg-primary/80'
+                  onClick={ showPreviousImage }
+                  disabled={ isFirstImage }
+                >
+                  <ChevronLeft className='h-6 w-6 text-primary-foreground ' />
+                </Button>
+                <TooltipContent>
+                  Click to view the previous image
+                </TooltipContent>
+              </TooltipTrigger>
+          </Tooltip>
         )}
 
         {page < totalPageNumber && currentIndex === images.length - 1 ? (
-          <Button
-            type='button'
-            variant='ghost'
-            size='icon'
-            className='absolute right-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-md rounded-l-none bg-primary/20 p-1 hover:bg-primary/80'
-            onClick={() => setCurrentIndex(0)}
-          >
-            <Link
-              href={`/?page=${page + 1}&limit=${limit}`}
-              prefetch={true}
-              scroll={false}
-              legacyBehavior
-              passHref
-            >
-              <a>
-                <ChevronsRight className='h-6 w-6 text-primary-foreground' />
-              </a>
-            </Link>
-          </Button>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                type='button'
+                variant='ghost'
+                size='icon'
+                className='absolute right-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-md rounded-l-none bg-primary/20 p-1 hover:bg-primary/80'
+                onClick={ () => setCurrentIndex(0) }
+              >
+                <Link
+                  href={ `/?page=${page + 1}&limit=${limit}` }
+                  prefetch={ true }
+                  scroll={ false }
+                  legacyBehavior
+                  passHref
+                >
+                  <a>
+                    <ChevronsRight className='h-6 w-6 text-primary-foreground' />
+                  </a>
+                </Link>
+              </Button>
+              <TooltipContent>
+                Go to the next page
+              </TooltipContent>
+            </TooltipTrigger>
+         </Tooltip>
         ) : (
-          <Button
-            type='button'
-            variant='ghost'
-            size='icon'
-            className='absolute right-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-full bg-primary/20 p-1 hover:bg-primary/80'
-            disabled={isLastImage}
-            onClick={showNextImage}
-          >
-            <ChevronRight className='h-6 w-6 text-primary-foreground' />
-          </Button>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon'
+                  className='absolute right-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-full bg-primary/20 p-1 hover:bg-primary/80'
+                  disabled={ isLastImage }
+                  onClick={ showNextImage }
+                >
+                  <ChevronRight className='h-6 w-6 text-primary-foreground' />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                Click to view the next image
+              </TooltipContent>
+          </Tooltip>
         )}
       </div>
       <ImageLinks
@@ -241,13 +280,20 @@ const ImageGallerySlider = ({
             }}
           >
             {page > 1 ? (
-              <PaginationPrevious
-                href={`/?page=${page - 1}&limit=${limit}`}
-                prefetch={true}
-                scroll={false}
-                legacyBehavior
-                passHref
-              />
+              <Tooltip>
+                <TooltipTrigger>
+                  <PaginationPrevious
+                    href={ `/?page=${page - 1}&limit=${limit}` }
+                    prefetch={ true }
+                    scroll={ false }
+                    legacyBehavior
+                    passHref
+                  />
+                  <TooltipContent>
+                    Go to the previous page
+                  </TooltipContent>
+                </TooltipTrigger>
+              </Tooltip>
             ) : (
               <PaginationLink
                 href={`/?page=${totalPageNumber}&limit=${limit}`}
@@ -331,10 +377,7 @@ const ImageGallerySlider = ({
               {images[currentIndex].description}
             </Muted>
 
-            <div className='flex items-center justify-center gap-1'>
-              <LocateFixed />
-              <Muted>{images[currentIndex].city}</Muted>
-            </div>
+
           </>
         )}
       </div>
@@ -368,7 +411,6 @@ const ImageLinks = ({
 }: ImageLinkProps) => {
   return (
     <div className='mx-auto mt-6 flex flex-col items-center justify-center gap-1'>
-      <TooltipProvider>
         <Tooltip>
           <TooltipTrigger>
             <InfoIcon />
@@ -377,7 +419,6 @@ const ImageLinks = ({
             Click on the circles to navigate to the corresponding image
           </TooltipContent>
         </Tooltip>
-      </TooltipProvider>
       <div className='flex w-full items-center justify-center '>
         {/* Render circles for each image */}
         {images.map((_, index) => (

@@ -5,9 +5,7 @@ import prisma from '../lib/prisma'
 import { auth, currentUser } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
 
-export async function clog(text: string) {
-  console.log(text)
-}
+
 export async function getAllImages({
   page,
   limit
@@ -244,6 +242,7 @@ export const getCurrentUser = async () => {
       id: userId
     },
     select: {
+      id: true,
       role: true,
       password: false
     }
@@ -321,3 +320,69 @@ export const getInitUser = async () => {
 
   throw new Error('User not found')
 }
+
+
+export const getAllUsers = async () => {
+  return await prisma.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      userName: true,
+      role: true,
+      userImages: {
+        select: {
+          id: true,
+          imageUrl: true
+        }
+      }
+    }
+  })
+
+}
+
+export const getUserData = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId
+    },
+    select: {
+      id: true,
+      email: true,
+      userName: true,
+      role: true,
+      userImages: {
+        select: {
+          id: true,
+          imageUrl: true
+        }
+      }
+    }
+  })
+  if (user) return user
+
+  throw new Error('User not found')
+
+}
+
+
+export const updateUserRole = async({
+  userId,
+  role
+}: {
+  userId: string
+  role: string
+}) => {
+  const updated = await prisma.user.update({
+    where: {
+      id: userId
+    },
+    data: {
+      role
+    }
+  })
+  if (updated) {
+    revalidatePath('/admin')
+    return updated
+  }
+}
+

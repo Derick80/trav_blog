@@ -1,5 +1,4 @@
-import { useState, useRef } from 'react'
-
+import React from 'react'
 import toast from 'react-hot-toast'
 import {
   Popover,
@@ -10,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { H3 } from '@/components/ui/typography'
-import { CopyIcon, Instagram, ShareIcon, X } from 'lucide-react'
+import { CopyIcon, ShareIcon } from 'lucide-react'
 
 type Props = {
   id: string
@@ -20,7 +19,7 @@ export function ShareImageButton({ id }: Props) {
   const postUrl = `http://localhost.com/photos/${id}`
   const encodedPostUrl = encodeURIComponent(postUrl)
 
-  const ref = useRef<HTMLInputElement | null>(null)
+  const ref = React.useRef<HTMLInputElement | null>(null)
 
   const copyLink = () => {
     ref.current?.select()

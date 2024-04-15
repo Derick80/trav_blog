@@ -1,7 +1,6 @@
-import { FlagIcon, ShareIcon, ThumbsUp } from 'lucide-react'
+import {  ThumbsUp } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useUser } from '@clerk/nextjs'
-import { hasLikedImage } from '@/app/actions'
 import React from 'react'
 import { ShareImageButton } from './share-button'
 
@@ -28,6 +27,7 @@ const ImageUserInteractionMenu = ({
   }, [likeCount, currentImageId])
 
   const { isSignedIn, user, isLoaded } = useUser()
+console.log(user,'user from image-user-interaction-menu useUser');
 
   if (!isLoaded) return null
   if (!isSignedIn)

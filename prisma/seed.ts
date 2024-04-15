@@ -5,7 +5,7 @@ import { imagesToSeed } from './image-seed'
 const prisma = new PrismaClient()
 
 async function seed() {
-  const email = (await process.env.SEED_EMAIL) as string
+  const email = process.env.SEED_EMAIL as string
 
   // cleanup the existing database
   await prisma.user.delete({ where: { email: email } }).catch(() => {
