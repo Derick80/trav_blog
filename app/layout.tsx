@@ -21,21 +21,21 @@ export default async function RootLayout(props: {
   return (
     <ClerkProvider>
       <TooltipProvider>
-      <html lang='en'>
-        <body
-          className={cn(
-            'flex min-h-screen w-full min-w-full  flex-col  bg-background antialiased',
-            inter.className
-          )}
-        >
-          <NavMenu />
-          <main className='flex flex-grow flex-col items-center  p-1 md:p-5'>
-            {props.children}
-            {props.modal}
-          </main>
-          <div id='modal-root' />
-        </body>
-      </html>
+        <html lang='en'>
+          <body
+            className={cn(
+              'flex min-h-screen w-full min-w-full  flex-col  bg-background antialiased',
+              inter.className
+            )}
+          >
+            <NavMenu />
+            <main className='flex flex-grow flex-col items-center  p-1 md:p-5'>
+              {props.children}
+              {props.modal}
+            </main>
+            <div id='modal-root' />
+          </body>
+        </html>
       </TooltipProvider>
     </ClerkProvider>
   )

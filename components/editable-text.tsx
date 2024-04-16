@@ -85,13 +85,11 @@ const EditableTextField = ({
                     }
                   )}
                 >
-                  <span>{value ? value : 'Double click to edit'}</span>
+                  <span>{value ? value : 'Click to edit'}</span>
                   <PencilIcon className='h-4 w-4 text-gray-500' />
                 </div>
                 <TooltipContent>
-                  <span className='text-sm text-gray-500'>
-                    Double click to edit
-                  </span>
+                  <span className='text-sm text-gray-500'>Click to edit</span>
                 </TooltipContent>
               </TooltipTrigger>
             </Tooltip>

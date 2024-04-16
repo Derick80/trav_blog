@@ -61,6 +61,7 @@ type ImageSliderProps = {
   page: number
   limit: number
 }
+
 const ImageSlider = ({
   images,
   totalImages,
