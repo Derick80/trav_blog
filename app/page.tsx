@@ -50,6 +50,21 @@ async function Home({
   console.log(categories, 'catts');
 
 
+  function handleCategorySelect (id: string, title: string) {
+    const searchParams = new URLSearchParams(window.location.search)
+    const category = searchParams.get('category')
+    const categories = category ? category.split(',') : []
+    const index = categories.indexOf(id)
+    if (index > -1) {
+      categories.splice(index, 1)
+    } else {
+      categories.push(id)
+    }
+    searchParams.set('category', categories.join(','))
+    window.location.search = searchParams.toString()
+
+
+  }
 
 
   return (
@@ -72,7 +87,10 @@ async function Home({
         </Button>
         {
           categories.map((cat) => (
-            <UpdateButton key={ cat.id } count={ cat.count } setCategory={ getCategorySummary}/>
+            <UpdateButton key={ cat.id } title={ cat.title } count={ cat.count }
+
+
+            />
 
           ))
         }

@@ -581,6 +581,8 @@ export const getCategorySummary = async ({
       title: 'asc'
     }
   })
+      revalidatePath('/')
+
   return categories.map((cat)=> {
     return {
       id: cat.id,
@@ -589,9 +591,9 @@ export const getCategorySummary = async ({
     }
 
 
-
   }
   )
+
 }
 
 
