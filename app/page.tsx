@@ -64,7 +64,6 @@ async function Home({
           searchParams={searchParams}
         />
       </div>
-      <div className='flex flex-wrap gap-2'></div>
 
       <Separator />
       <H2>

@@ -5,6 +5,7 @@ import { useAuth, UserButton } from '@clerk/nextjs'
 import { SunIcon } from 'lucide-react'
 import { Caption } from './ui/typography'
 import { cn } from '@/lib/utils'
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
 
 const ACTIVE_ROUTE = 'py-1 px-2 underline'
 const INACTIVE_ROUTE = 'py-1 px-2 hover:text-gray-300 hover:bg-gray-700'
@@ -47,7 +48,14 @@ export default function NavMenu() {
           </>
         )}
         <li className='flex items-center px-2 py-1 underline'>
-          <SunIcon className='h-4 w-4' />
+          <Tooltip>
+            <TooltipTrigger>
+              <SunIcon className='h-4 w-4' />
+            </TooltipTrigger>
+            <TooltipContent>
+              <Caption>TBD: Toggle Dark Mode</Caption>
+            </TooltipContent>
+          </Tooltip>
         </li>
       </ul>
     </nav>

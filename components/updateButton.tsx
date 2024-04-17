@@ -18,41 +18,34 @@ export const UpdateButton = ({
   totalImages: number
 }) => {
   const [activeCategories, setActiveCategories] = React.useState(() => {
-    return searchParams.category === typeof 'string'
+    return typeof searchParams.category === 'string'
       ? searchParams.category.split(',')
       : []
   })
 
   const router = useRouter()
-
-  // Effect to update the URL whenever activeCategories changes
   React.useEffect(() => {
     const nextCategory = activeCategories.join(',')
-    if (nextCategory) {
-      // Pushing updated query to the URL
-      router.push(`/?category=${encodeURIComponent(nextCategory)}`, {
+    router.push(
+      `/?${nextCategory ? `category=${encodeURIComponent(nextCategory)}` : ''}`,
+      {
         scroll: false
-      })
-    } else {
-      // If no categories are active, remove the query parameter
-      router.push('/', { scroll: false })
-    }
-  }, [activeCategories, router])
+      }
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCategories]) // Removed router from dependencies to prevent unnecessary re-runs
 
   function handleCategoryClick(title: string) {
     setActiveCategories((prevCategories) => {
       const currentIndex = prevCategories.indexOf(title)
-      if (currentIndex > -1) {
-        // Remove category if it's already included
-        return prevCategories.filter((category) => category !== title)
-      } else {
-        // Add category if not included
-        return [...prevCategories, title]
-      }
+      return currentIndex > -1
+        ? prevCategories.filter((cat) => cat !== title)
+        : [...prevCategories, title]
     })
   }
 
   const handleReset = () => {
+    setActiveCategories([])
     router.push('/', { scroll: false })
   }
 
@@ -64,7 +57,7 @@ export const UpdateButton = ({
           variant='ghost'
           size='icon'
           className='relative z-20 mr-4 rounded-full bg-primary/70 p-1 hover:bg-primary/30'
-          onClick={() => handleReset}
+          onClick={handleReset}
         >
           <Small>
             <span className='mr-1'>All</span>
@@ -79,18 +72,18 @@ export const UpdateButton = ({
           category.count >= 0 && (
             <Button
               type='button'
-              variant='ghost'
               size='default'
+              variant='outline'
               key={category.id}
+              onClick={() => handleCategoryClick(category.title)}
+              className={clsx(
+                'relative z-20 mr-4 rounded-full bg-primary/70 p-1 hover:bg-primary/30',
+                { 'bg-primary/30': activeCategories.includes(category.title) }
+              )}
               disabled={
                 category.count === 0 &&
                 !activeCategories.includes(category.title)
               }
-              onClick={() => handleCategoryClick(category.title)}
-              className={clsx(
-                'relative z-20 rounded-full bg-primary/70 p-1 hover:bg-primary/30',
-                activeCategories.includes(category.title) && 'bg-primary/30'
-              )}
             >
               <Small>
                 <span className='mr-1'>{category.title}</span>

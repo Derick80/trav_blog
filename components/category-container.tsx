@@ -3,6 +3,8 @@ import { updateImageCategory } from '@/app/actions'
 import { ChevronDownIcon, ChevronUpIcon, XIcon } from 'lucide-react'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
+import { H3 } from './ui/typography'
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
 
 export type CategoryContainerProps = {
   role: string
@@ -77,7 +79,8 @@ export const CategoryContainer = ({
     }
   }, [])
   return (
-    <div className='relative flex flex-col items-center justify-between gap-1 p-1'>
+    <div className='relative flex flex-col justify-between gap-1 p-1'>
+      <H3 className='text-left'>Categories</H3>
       <div className='flex w-full items-center justify-between'>
         <div className='w-ful mr-4 flex flex-wrap items-center gap-1'>
           {categories.find((category) => category.selected) ? (
@@ -105,18 +108,25 @@ export const CategoryContainer = ({
           )}
         </div>
         {role === 'admin' && (
-          <Button
-            className='   '
-            variant='outline'
-            size='icon'
-            onClick={() => setDropdown(!dropdown)}
-          >
-            {dropdown ? (
-              <ChevronUpIcon size={24} />
-            ) : (
-              <ChevronDownIcon size={24} />
-            )}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                className='   '
+                variant='outline'
+                size='icon'
+                onClick={() => setDropdown(!dropdown)}
+              >
+                {dropdown ? (
+                  <ChevronUpIcon size={24} />
+                ) : (
+                  <ChevronDownIcon size={24} />
+                )}{' '}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <span>Click to select categories</span>
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
 

@@ -14,17 +14,19 @@ export async function getAllImages({
   limit: number
   category?: string
 }) {
-  const catsToFind = category ? category.split(',') : undefined
+  const catsToFind = category ? category.split(',') : []
 
+  // Prepare the 'AND' conditions for all categories to be found
+  const categoryConditions = catsToFind.map((cat) => ({
+    categories: {
+      some: {
+        title: cat
+      }
+    }
+  }))
   const retrieved = await prisma.photos.findMany({
     where: {
-      categories: {
-        some: {
-          title: {
-            in: catsToFind
-          }
-        }
-      }
+      AND: categoryConditions
     },
 
     select: {
@@ -62,18 +64,16 @@ export async function getAllImages({
     skip: (page - 1) * limit,
     take: limit
   })
-  const totalImages = await prisma.photos.count()
+
+  const totalImages = await prisma.photos.count({
+    where: {
+      AND: categoryConditions
+    }
+  })
+
   const imagesWithSharedCategories = await prisma.photos.count({
     where: {
-      categories: catsToFind
-        ? {
-            some: {
-              title: {
-                in: catsToFind
-              }
-            }
-          }
-        : undefined
+      AND: categoryConditions
     }
   })
 
@@ -86,22 +86,14 @@ export async function getAllImages({
       description: image.description,
       city: image.city,
       userId: image.userId,
-      categories: image.categories
-        .map((category) => {
-          return {
-            id: category.id,
-            title: category.title
-          }
-        })
-        .flat(),
-      likes: image.likes
-        .map((like) => {
-          return {
-            photoId: like.photoId,
-            userId: like.userId
-          }
-        })
-        .flat(),
+      categories: image.categories.map((category) => ({
+        id: category.id,
+        title: category.title
+      })),
+      likes: image.likes.map((like) => ({
+        photoId: like.photoId,
+        userId: like.userId
+      })),
       likesCount: image._count.likes,
       role: image.user.role,
       _count: {

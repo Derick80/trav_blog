@@ -25,7 +25,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import EditableTextField from '../editable-text'
 import { useUser } from '@clerk/nextjs'
 import { CategoryContainer } from '../category-container'
-import { useSearchParams } from 'next/navigation'
 
 const ImageGallerySlider = ({
   allCategories,
@@ -66,9 +65,6 @@ const ImageGallerySlider = ({
   }[]
 }) => {
   const [queryUrl, setQueryUrl] = React.useState('')
-  console.log(category, 'category from image-gallery-slider')
-
-  console.log(searchParams, 'params from image-gallery-slider')
 
   const limit =
     typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
@@ -77,11 +73,11 @@ const ImageGallerySlider = ({
 
   const [currentIndex, setCurrentIndex] = React.useState(0)
   const [likeCount, setLikeCount] = React.useState(
-    images[currentIndex].likes.length
+    images[currentIndex].likes?.length || 0
   )
   // Use the useEffect hook to update the like count when the currentIndex changes
   React.useEffect(() => {
-    setLikeCount(images[currentIndex].likes.length)
+    setLikeCount(images[currentIndex].likes?.length || 0)
   }, [currentIndex, images])
 
   const totalPageNumber = Math.ceil(totalImages / limit)
@@ -125,7 +121,7 @@ const ImageGallerySlider = ({
     }
   }
   return (
-    <div className='mx-auto flex h-full  w-96 flex-col md:w-[500px]'>
+    <div className='mx-auto flex h-full w-96  flex-col gap-4 md:w-[750px]'>
       {role === 'admin' ? (
         <EditableTextField
           initialValue={images[currentIndex].title}
@@ -140,11 +136,11 @@ const ImageGallerySlider = ({
         </Muted>
       )}
 
-      <div className='overflow-hidsden relative mx-auto h-[225px] w-96 md:h-[500px] md:w-[500px]'>
+      <div className='overflow-hidsden relative mx-auto h-[225px] w-96 md:h-[500px] md:w-full'>
         <div className='absolute inset-0'>
           {images.map((image, index) => (
             <div
-              className={`absolute   transition-opacity duration-1000 ${index === currentIndex ? 'opacity-100' : 'opacity-0'}  left-0 top-0 h-[225px] w-full md:h-[500px]`}
+              className={`absolute transition-opacity duration-1000 ${index === currentIndex ? 'opacity-100' : 'opacity-0'}  left-0 top-0 h-[225px] w-full md:h-[500px]`}
               style={{ zIndex: images.length - index }}
               key={image.id}
             >
@@ -170,7 +166,7 @@ const ImageGallerySlider = ({
         </div>
         {/* Overlay Bar */}
         <div
-          className='absolute -bottom-6 left-0 right-0 z-30 flex items-center justify-between p-2'
+          className='absolute -bottom-6 left-0 right-0 z-30 mt-4 flex items-center justify-between p-2'
           style={{ backdropFilter: 'blur(4px)' }}
         >
           <Button
@@ -190,9 +186,15 @@ const ImageGallerySlider = ({
             {likeCount}
           </span>
 
-          <div className='flex items-center gap-1'>
+          <div className='mt-4 flex items-center gap-1'>
             <CompassIcon />
-            <Small>{images[currentIndex].city}</Small>
+            <EditableTextField
+              initialValue={images[currentIndex].city}
+              className='w-fit'
+              onUpdate={(value) => {
+                editCity({ id: images[currentIndex].id, city: value })
+              }}
+            />
           </div>
           <ShareImageButton id={images[currentIndex].id} />
         </div>
@@ -205,7 +207,6 @@ const ImageGallerySlider = ({
                 href={`/?category=${category}&page=${page - 1}&limit=${limit}`}
                 prefetch={true}
                 scroll={false}
-                legacyBehavior
                 passHref
               >
                 <Button
@@ -246,7 +247,6 @@ const ImageGallerySlider = ({
                 href={`/?category=${category}&page=${page + 1}&limit=${limit}`}
                 prefetch={true}
                 scroll={false}
-                legacyBehavior
                 passHref
               >
                 <Button
@@ -289,8 +289,8 @@ const ImageGallerySlider = ({
       />
       <Tooltip>
         <TooltipTrigger>
-          <Pagination>
-            <PaginationContent className='w-1/2 justify-between'>
+          <Pagination className='flex flex-col items-center justify-between'>
+            <PaginationContent className='relative w-1/2 justify-between'>
               <PaginationItem>
                 {page > 1 ? (
                   <Tooltip>
@@ -299,7 +299,6 @@ const ImageGallerySlider = ({
                         href={queryUrl}
                         prefetch={true}
                         scroll={false}
-                        legacyBehavior
                         passHref
                         onClick={() => handlePageChange(page, 'previous')}
                       />
@@ -314,7 +313,6 @@ const ImageGallerySlider = ({
                     }}
                     prefetch={true}
                     scroll={false}
-                    legacyBehavior
                     passHref
                   >
                     <ChevronsLeft />
@@ -331,7 +329,6 @@ const ImageGallerySlider = ({
                     onClick={() => setCurrentIndex(0)}
                     prefetch={true}
                     scroll={false}
-                    legacyBehavior
                     passHref
                   >
                     {pageNumber}
@@ -346,7 +343,6 @@ const ImageGallerySlider = ({
                   }}
                   prefetch={true}
                   scroll={false}
-                  legacyBehavior
                   passHref
                 >
                   {page < totalPageNumber ? (
@@ -357,6 +353,9 @@ const ImageGallerySlider = ({
                 </PaginationLink>
               </PaginationItem>
             </PaginationContent>
+            <Muted className='mt-2 text-center'>
+              Page {page} of {totalPageNumber}
+            </Muted>
           </Pagination>
         </TooltipTrigger>
         <TooltipContent>
@@ -439,7 +438,7 @@ const ImageLinks = ({
   }
 
   return (
-    <div className='mx-auto mb-2 mt-6 flex flex-col items-center justify-center gap-1 border-2'>
+    <div className='mx-auto mb-2 mt-6 flex flex-col items-center justify-center gap-1'>
       <Muted>
         {calculateRealImageIndex(currentIndex) + 1} of {totalImages} images
       </Muted>
