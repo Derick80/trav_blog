@@ -41,3 +41,10 @@
 
 - I used [Marked](https://marked.js.org/) to parse markdown strings into HTML
 - I took inspiration from [Jacob Paris](https://www.jacobparis.com/content/remix-markdown-preview) and his Remix blog post on how to use build a DIY markdown editor and preview.
+
+
+### Fly.io
+- In one terminal
+- ```❯ fly proxy 5555:5555 --app travel-blog```
+- In another terminal
+- ```fly ssh console -C "npm run prisma:studio"  --app travel-blog```

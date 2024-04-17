@@ -9,14 +9,25 @@ primary_region = 'ord'
 [build]
 
 [http_service]
-  internal_port = 3000
-  force_https = true
-  auto_stop_machines = true
-  auto_start_machines = true
-  min_machines_running = 0
-  processes = ['app']
+internal_port = 3000
+force_https = true
+auto_stop_machines = true
+auto_start_machines = true
+min_machines_running = 0
+processes = ['app']
 
 [[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
-  cpus = 1
+memory = '1gb'
+cpu_kind = 'shared'
+cpus = 1
+
+
+# I'm not strictly sure that this is necessary to run the prisma studio
+[[services]]
+internal_port = 5555
+protocol = "tcp"
+processes = ["app"]
+
+[[services.ports]]
+handlers = ["tls", "http"]
+port = 5555
