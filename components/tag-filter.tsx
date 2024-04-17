@@ -1,20 +1,8 @@
-    'use client'
-import { Button } from './ui/button';
+'use client'
+import { Button } from './ui/button'
 
-
-const FilterByCategory = ({
-
-}: {
-
-
-    }) => {
-
-
-    return (
-        <>
-
-        </>
-    )
+const FilterByCategory = ({}: {}) => {
+  return <></>
 }
 
 export default FilterByCategory

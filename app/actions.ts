@@ -11,25 +11,20 @@ export async function getAllImages({
   category
 }: {
   page: number
-    limit: number
+  limit: number
   category?: string
-  }) {
-
-
+}) {
   const catsToFind = category ? category.split(',') : undefined
 
   const retrieved = await prisma.photos.findMany({
     where: {
-      categories:
-        catsToFind
-          ? {
-              some: {
-                title: {
-                  in: catsToFind
-                }
-              }
-            }
-          : undefined
+      categories: {
+        some: {
+          title: {
+            in: catsToFind
+          }
+        }
+      }
     },
 
     select: {
@@ -50,7 +45,7 @@ export async function getAllImages({
               title: {
                 in: catsToFind
               }
-}
+            }
           }
         }
       },
@@ -67,19 +62,18 @@ export async function getAllImages({
     skip: (page - 1) * limit,
     take: limit
   })
-const totalImages = await prisma.photos.count()
+  const totalImages = await prisma.photos.count()
   const imagesWithSharedCategories = await prisma.photos.count({
     where: {
-      categories:
-        catsToFind
-          ? {
-              some: {
-                title: {
-                  in: catsToFind
-                }
+      categories: catsToFind
+        ? {
+            some: {
+              title: {
+                in: catsToFind
               }
             }
-          : undefined
+          }
+        : undefined
     }
   })
 
@@ -115,7 +109,7 @@ const totalImages = await prisma.photos.count()
       }
     }
   })
-  return { images, totalImages ,imagesWithSharedCategories}
+  return { images, totalImages, imagesWithSharedCategories }
 }
 
 export async function hasLikedImage({
@@ -441,7 +435,6 @@ export const getAllCategories = async () => {
         select: {
           photos: true
         }
-
       }
     }
   })
@@ -551,12 +544,10 @@ export const updateImageCategory = async ({
   }
 }
 
-
-
 export const getCategorySummary = async ({
   category
 }: {
-  category?:string
+  category?: string
 }) => {
   const categories = await prisma.category.findMany({
     include: {
@@ -572,7 +563,6 @@ export const getCategorySummary = async ({
                 }
               }
             }
-
           }
         }
       }
@@ -581,20 +571,13 @@ export const getCategorySummary = async ({
       title: 'asc'
     }
   })
-      revalidatePath('/')
+  revalidatePath('/')
 
-  return categories.map((cat)=> {
+  return categories.map((cat) => {
     return {
       id: cat.id,
       title: cat.title,
       count: cat._count.photos
     }
-
-
-  }
-  )
-
+  })
 }
-
-
-

@@ -32,8 +32,6 @@ async function seed() {
 
   const userId = user.id
 
-
-
   // Create categories
   for (let index = 0; index < seedCategories.length; index++) {
     const category = seedCategories[index]
@@ -44,27 +42,23 @@ async function seed() {
     })
   }
 
-
   const categories = await prisma.category.findMany()
 
   if (!categories) {
     throw new Error('No categories found')
   }
 
-
-
-function getRandomCategory ({ categories }: {
-  categories: {
-    id: string
-    title: string
-  }[]
-  } ){
+  function getRandomCategory({
+    categories
+  }: {
+    categories: {
+      id: string
+      title: string
+    }[]
+  }) {
     const randomIndex = Math.floor(Math.random() * categories.length)
     return categories[randomIndex]
-
-}
-
-
+  }
 
   for (let index = 0; index < imagesToSeed.length; index++) {
     const image = imagesToSeed[index]
@@ -81,14 +75,12 @@ function getRandomCategory ({ categories }: {
         city: image.city,
         categories: {
           connect: {
-            id: getRandomCategory({ categories }).id,
+            id: getRandomCategory({ categories }).id
           }
-
         }
       }
     })
   }
-
 
   console.log(`Database has been seeded. 🌱`)
 }

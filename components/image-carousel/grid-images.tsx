@@ -12,11 +12,7 @@ import React from 'react'
 import { Muted, Small } from '../ui/typography'
 import { Button } from '../ui/button'
 import Link from 'next/link'
-import {
-  editCity,
-  editDescription,
-  editTitle,
-  likeImage} from '@/app/actions'
+import { editCity, editDescription, editTitle, likeImage } from '@/app/actions'
 import { ShareImageButton } from './share-button'
 import {
   Pagination,
@@ -25,22 +21,25 @@ import {
   PaginationLink,
   PaginationPrevious
 } from '../ui/pagination'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger
-} from '../ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import EditableTextField from '../editable-text'
 import { useUser } from '@clerk/nextjs'
 import { CategoryContainer } from '../category-container'
+import { useSearchParams } from 'next/navigation'
 
 const ImageGallerySlider = ({
   allCategories,
   images,
   totalImages,
   page,
-  role
+  role,
+  category,
+  searchParams
 }: {
+  searchParams: {
+    [key: string]: string | string[] | undefined
+  }
+  category: string
   allCategories: {
     id: string
     title: string
@@ -65,12 +64,17 @@ const ImageGallerySlider = ({
       title: string
     }[]
   }[]
-  }) => {
+}) => {
+  const [queryUrl, setQueryUrl] = React.useState('')
+  console.log(category, 'category from image-gallery-slider')
+
+  console.log(searchParams, 'params from image-gallery-slider')
+
+  const limit =
+    typeof searchParams.limit === 'string' ? parseInt(searchParams.limit) : 10
 
   const { isSignedIn, user, isLoaded } = useUser()
-  console.log(user, 'user from image-user-interaction-menu useUser')
 
-  const limit = 10
   const [currentIndex, setCurrentIndex] = React.useState(0)
   const [likeCount, setLikeCount] = React.useState(
     images[currentIndex].likes.length
@@ -99,6 +103,26 @@ const ImageGallerySlider = ({
     setCurrentIndex(
       (prevIndex) => (prevIndex - 1 + images.length) % images.length
     )
+  }
+
+  const handlePageChange = (
+    pageNumber: number,
+    direction: 'previous' | 'next'
+  ) => {
+    const page = searchParams.page
+      ? parseInt(searchParams.page as string)
+      : pageNumber
+
+    const targetPage = direction === 'next' ? page + 1 : page - 1
+
+    searchParams.page = targetPage.toString()
+
+    if (targetPage > 0 && targetPage <= totalPageNumber) {
+      setQueryUrl(`/?category=${category}&page=${targetPage}&limit=${limit}`)
+      setCurrentIndex(
+        direction === 'next' ? 0 : images.length - (1 % images.length)
+      )
+    }
   }
   return (
     <div className='mx-auto flex h-full  w-96 flex-col md:w-[500px]'>
@@ -177,26 +201,23 @@ const ImageGallerySlider = ({
         {page > 1 && currentIndex === 0 ? (
           <Tooltip>
             <TooltipTrigger>
-              <Button
-                type='button'
-                variant='ghost'
-                size='icon'
-                className='absolute left-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-md rounded-r-none  bg-primary/20 p-1 hover:bg-primary/80'
-                onClick={() => setCurrentIndex(images.length - 1)}
-                disabled={isFirstImage}
+              <Link
+                href={`/?category=${category}&page=${page - 1}&limit=${limit}`}
+                prefetch={true}
+                scroll={false}
+                legacyBehavior
+                passHref
               >
-                <Link
-                  href={`/?page=${page - 1}&limit=${limit}`}
-                  prefetch={true}
-                  scroll={false}
-                  legacyBehavior
-                  passHref
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon'
+                  className='absolute left-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-md rounded-r-none bg-primary/20 p-1 hover:bg-primary/80'
+                  onClick={() => handlePageChange(page, 'previous')}
                 >
-                  <a>
-                    <ChevronsLeft className='h-6 w-6 text-primary-foreground' />
-                  </a>
-                </Link>
-              </Button>
+                  <ChevronsLeft className='h-6 w-6 text-primary-foreground' />
+                </Button>
+              </Link>
             </TooltipTrigger>
             <TooltipContent>Go to the previous page</TooltipContent>
           </Tooltip>
@@ -221,25 +242,23 @@ const ImageGallerySlider = ({
         {page < totalPageNumber && currentIndex === images.length - 1 ? (
           <Tooltip>
             <TooltipTrigger>
-              <Button
-                type='button'
-                variant='ghost'
-                size='icon'
-                className='absolute right-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-md rounded-l-none bg-primary/20 p-1 hover:bg-primary/80'
-                onClick={() => setCurrentIndex(0)}
+              <Link
+                href={`/?category=${category}&page=${page + 1}&limit=${limit}`}
+                prefetch={true}
+                scroll={false}
+                legacyBehavior
+                passHref
               >
-                <Link
-                  href={`/?page=${page + 1}&limit=${limit}`}
-                  prefetch={true}
-                  scroll={false}
-                  legacyBehavior
-                  passHref
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon'
+                  className='absolute right-0 top-1/2 z-20 h-full -translate-y-1/2 transform rounded-md rounded-l-none bg-primary/20 p-1 hover:bg-primary/80'
+                  onClick={() => setCurrentIndex(0)}
                 >
-                  <a>
-                    <ChevronsRight className='h-6 w-6 text-primary-foreground' />
-                  </a>
-                </Link>
-              </Button>
+                  <ChevronsRight className='h-6 w-6 text-primary-foreground' />
+                </Button>
+              </Link>
               <TooltipContent>Go to the next page</TooltipContent>
             </TooltipTrigger>
           </Tooltip>
@@ -270,23 +289,19 @@ const ImageGallerySlider = ({
       />
       <Tooltip>
         <TooltipTrigger>
-          <Pagination
-          >
+          <Pagination>
             <PaginationContent className='w-1/2 justify-between'>
-              <PaginationItem
-                onClick={() => {
-                  setCurrentIndex(0)
-                }}
-              >
+              <PaginationItem>
                 {page > 1 ? (
                   <Tooltip>
                     <TooltipTrigger>
                       <PaginationPrevious
-                        href={`/?page=${page - 1}&limit=${limit}`}
+                        href={queryUrl}
                         prefetch={true}
                         scroll={false}
                         legacyBehavior
                         passHref
+                        onClick={() => handlePageChange(page, 'previous')}
                       />
                       <TooltipContent>Go to the previous page</TooltipContent>
                     </TooltipTrigger>
@@ -294,6 +309,9 @@ const ImageGallerySlider = ({
                 ) : (
                   <PaginationLink
                     href={`/?page=${totalPageNumber}&limit=${limit}`}
+                    onClick={() => {
+                      setCurrentIndex(images.length - 1)
+                    }}
                     prefetch={true}
                     scroll={false}
                     legacyBehavior
@@ -306,13 +324,11 @@ const ImageGallerySlider = ({
               {pageNumbers.map((pageNumber) => (
                 <PaginationItem
                   key={pageNumber}
-                  onClick={() => {
-                    setCurrentIndex(0)
-                  }}
                   className={`mx-1 ${page === pageNumber ? ' font-bold text-primary underline' : ' text-primary'}`}
                 >
                   <PaginationLink
-                    href={`/?page=${pageNumber}&limit=${limit}`}
+                    href={`/?category=${category}&page=${pageNumber}&limit=${limit}`}
+                    onClick={() => setCurrentIndex(0)}
                     prefetch={true}
                     scroll={false}
                     legacyBehavior
@@ -322,17 +338,12 @@ const ImageGallerySlider = ({
                   </PaginationLink>
                 </PaginationItem>
               ))}
-              <PaginationItem
-                onClick={() => {
-                  setCurrentIndex(0)
-                }}
-              >
+              <PaginationItem>
                 <PaginationLink
-                  href={
-                    page < totalPageNumber
-                      ? `/?page=${page + 1}&limit=${limit}`
-                      : `/?page=1&limit=${limit}`
-                  }
+                  href={`/?category=${category}&page=${page + 1}&limit=${limit}`}
+                  onClick={() => {
+                    setCurrentIndex(0)
+                  }}
                   prefetch={true}
                   scroll={false}
                   legacyBehavior
@@ -358,8 +369,6 @@ const ImageGallerySlider = ({
         allCategories={allCategories}
         pickedCategory={images[currentIndex].categories.map((cat) => cat)}
       />
-
-
 
       <div className='items-cesnter mt-2 flex w-full flex-col justify-center gap-1 md:gap-4'>
         {role === 'admin' ? (
