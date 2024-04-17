@@ -57,18 +57,25 @@ model Account {
 }
 
 model Photos {
-  id                 String   @id @unique @default(uuid())
-  cloudinaryPublicId String   @unique
+  id                 String     @id @unique @default(uuid())
+  cloudinaryPublicId String     @unique
   imageUrl           String
-  city               String   @default("Unknown")
-  description        String   @default("No description")
-  title              String   @default("No title")
-  flagged            Boolean? @default(false)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  city               String     @default("Unknown")
+  description        String     @default("No description")
+  title              String     @default("No title")
+  flagged            Boolean?   @default(false)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  user               User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId             String
   likes              Like[]
+  categories         Category[]
+}
+
+model Category {
+  id     String   @id @unique @default(uuid())
+  title  String   @unique
+  photos Photos[]
 }
 
 model Session {

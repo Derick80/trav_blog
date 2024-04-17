@@ -1,4 +1,4 @@
-import {  ThumbsUp } from 'lucide-react'
+import { ThumbsUp } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useUser } from '@clerk/nextjs'
 import React from 'react'
@@ -27,7 +27,7 @@ const ImageUserInteractionMenu = ({
   }, [likeCount, currentImageId])
 
   const { isSignedIn, user, isLoaded } = useUser()
-console.log(user,'user from image-user-interaction-menu useUser');
+  console.log(user, 'user from image-user-interaction-menu useUser')
 
   if (!isLoaded) return null
   if (!isSignedIn)

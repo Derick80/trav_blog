@@ -12,6 +12,14 @@ async function seed() {
     // no worries if it doesn't exist yet
   })
 
+  await prisma.photos.deleteMany({}).catch(() => {
+    // no worries if it doesn't exist yet
+  })
+
+  await prisma.category.deleteMany({}).catch(() => {
+    // no worries if it doesn't exist yet
+  })
+
   const unhashed_password = (await process.env.UNHASHED_PASSWORD) as string
   const hashedPassword = await bcrypt.hash(unhashed_password, 10)
   const user = await prisma.user.create({
@@ -23,6 +31,34 @@ async function seed() {
   })
 
   const userId = user.id
+
+  // Create categories
+  for (let index = 0; index < seedCategories.length; index++) {
+    const category = seedCategories[index]
+    await prisma.category.create({
+      data: {
+        title: category.title
+      }
+    })
+  }
+
+  const categories = await prisma.category.findMany()
+
+  if (!categories) {
+    throw new Error('No categories found')
+  }
+
+  function getRandomCategory({
+    categories
+  }: {
+    categories: {
+      id: string
+      title: string
+    }[]
+  }) {
+    const randomIndex = Math.floor(Math.random() * categories.length)
+    return categories[randomIndex]
+  }
 
   for (let index = 0; index < imagesToSeed.length; index++) {
     const image = imagesToSeed[index]
@@ -36,10 +72,16 @@ async function seed() {
         userId: userId,
         imageUrl: image.imageUrl,
         cloudinaryPublicId: image.cloudinaryPublicId,
-        city: image.city
+        city: image.city,
+        categories: {
+          connect: {
+            id: getRandomCategory({ categories }).id
+          }
+        }
       }
     })
   }
+
   console.log(`Database has been seeded. 🌱`)
 }
 
@@ -51,3 +93,37 @@ seed()
   .finally(async () => {
     await prisma.$disconnect()
   })
+
+const seedCategories = [
+  {
+    title: 'Food'
+  },
+  {
+    title: 'Temple'
+  },
+  {
+    title: 'Shrine'
+  },
+  { title: 'Buildings' },
+  {
+    title: 'Nature'
+  },
+  {
+    title: 'View'
+  },
+  {
+    title: 'Text'
+  },
+  {
+    title: 'People'
+  },
+  {
+    title: 'Other'
+  },
+  {
+    title: 'Art'
+  },
+  {
+    title: 'Accomodation'
+  }
+]
