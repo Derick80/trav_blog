@@ -45,7 +45,6 @@ async function Home({
       category
     })
 
-  console.log(page, 'page')
 
   if (images.length === 0) {
     return <div>No images found</div>

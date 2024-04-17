@@ -51,6 +51,7 @@
     "tsx": "^4.7.2"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.5",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.12.7",
     "@types/react": "^18.2.78",
