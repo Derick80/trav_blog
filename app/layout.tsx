@@ -17,6 +17,7 @@ export const metadata: Metadata = {
 export default async function RootLayout(props: {
   children: React.ReactNode
   modal: React.ReactNode
+  about: React.ReactNode
 }) {
   return (
     <ClerkProvider>
