@@ -1,4 +1,4 @@
-'use server'
+import { cache } from 'react'
 
 import { revalidatePath } from 'next/cache'
 import prisma from '../lib/prisma'
@@ -6,15 +6,13 @@ import { auth, currentUser } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
 import { getCloudinaryBlurUrl } from '@/lib/functions'
 
-export async function getAllImages({
-  page,
-  limit,
-  category
+export const getAllImages = cache(async ({
+  page, limit, category
 }: {
-  page: number
-  limit: number
-  category?: string
-}) {
+  page: number, limit: number, category: string
+
+}) => {
+
   const catsToFind = category ? category.split(',') : []
 
   // Prepare the 'AND' conditions for all categories to be found
@@ -67,47 +65,49 @@ export async function getAllImages({
     take: limit
   })
 
-  const totalImages = await prisma.photos.count({
-    where: {
-      AND: categoryConditions
-    }
-  })
+const totalImages = await prisma.photos.count({
+  where: {
+    AND: categoryConditions
+  }
+})
 
-  const imagesWithSharedCategories = await prisma.photos.count({
-    where: {
-      AND: categoryConditions
-    }
-  })
+const imagesWithSharedCategories = await prisma.photos.count({
+  where: {
+    AND: categoryConditions
+  }
+})
 
-  const images = retrieved.map((image) => {
-    return {
-      id: image.id,
-      cloudinaryPublicId: image.cloudinaryPublicId,
-      blurredImageUrl: image.blurredImageUrl,
-      imageUrl: image.imageUrl,
-      title: image.title,
-      description: image.description,
-      city: image.city,
-      userId: image.userId,
-      categories: image.categories.map((category) => ({
-        id: category.id,
-        title: category.title
-      })),
-      likes: image.likes.map((like) => ({
-        photoId: like.photoId,
-        userId: like.userId
-      })),
-      likesCount: image._count.likes,
-      role: image.user.role,
-      _count: {
-        categories: image._count.categories
-      }
+const images = retrieved.map((image) => {
+  return {
+    id: image.id,
+    cloudinaryPublicId: image.cloudinaryPublicId,
+    blurredImageUrl: image.blurredImageUrl,
+    imageUrl: image.imageUrl,
+    title: image.title,
+    description: image.description,
+    city: image.city,
+    userId: image.userId,
+    categories: image.categories.map((category) => ({
+      id: category.id,
+      title: category.title
+    })),
+    likes: image.likes.map((like) => ({
+      photoId: like.photoId,
+      userId: like.userId
+    })),
+    likesCount: image._count.likes,
+    role: image.user.role,
+    _count: {
+      categories: image._count.categories
     }
-  })
-  return { images, totalImages, imagesWithSharedCategories }
+  }
+})
+return { images, totalImages, imagesWithSharedCategories }
 }
+)
 
-export async function hasLikedImage({
+
+export async function hasLikedImage ({
   photoId,
   userId
 }: {
@@ -201,7 +201,7 @@ export const likeImage = async (photoId: string, userId: string) => {
     return 'added'
   }
 }
-export async function editTitle({ id, title }: { id: string; title: string }) {
+export async function editTitle ({ id, title }: { id: string; title: string }) {
   const { userId } = auth()
 
   if (!userId) {
@@ -222,7 +222,7 @@ export async function editTitle({ id, title }: { id: string; title: string }) {
   }
 }
 
-export async function editDescription({
+export async function editDescription ({
   id,
   description
 }: {
