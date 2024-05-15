@@ -26,7 +26,7 @@ RUN npm ci --include=dev
 
 # Generate Prisma Client
 COPY --link prisma .
-RUN npx prisma generate && npx prisma migrate deploy && npx tsx prisma/seed.ts
+RUN npx prisma generate && npx prisma migrate deploy
 # npx prisma migrate deploy && npx node prisma/seed.js'
 # Copy application code
 COPY --link . .
