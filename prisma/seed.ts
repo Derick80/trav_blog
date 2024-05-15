@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { imagesToSeed } from './image-seed'
-import {getCloudinaryBlurUrl} from '../lib/functions'
+import { getCloudinaryBlurUrl } from '@/lib/functions'
 const prisma = new PrismaClient()
 
 async function seed() {
