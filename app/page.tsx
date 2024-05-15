@@ -33,7 +33,7 @@ async function Home({
     await getAllImages({
       page,
       limit,
-      category
+      category: category || ''
     })
 
 
