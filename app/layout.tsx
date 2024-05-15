@@ -30,6 +30,7 @@ export default async function RootLayout(props: {
           >
             <NavMenu />
             <main className='flex flex-grow flex-col items-center  p-1 md:p-5'>
+
               {props.children}
               {props.modal}
             </main>

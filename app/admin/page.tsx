@@ -1,9 +1,6 @@
 import React from 'react'
-import ImageGallerySlider from '@/components/image-carousel/grid-images'
 import { H2 } from '@/components/ui/typography'
-import { Separator } from '@/components/ui/separator'
-import ImageCarouselFeatures from '@/components/image-carousel/image-slider-about'
-import { getAllUsers, getCurrentUser, getUserData } from '../actions'
+import { getAllUsers, getCurrentUser } from '../actions'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Image from 'next/image'
 

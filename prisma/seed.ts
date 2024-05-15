@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { imagesToSeed } from './image-seed'
-
+import {getCloudinaryBlurUrl} from '../lib/functions'
 const prisma = new PrismaClient()
 
 async function seed() {
@@ -48,17 +48,37 @@ async function seed() {
     throw new Error('No categories found')
   }
 
-  function getRandomCategory({
-    categories
+  const assignRandomNumberOfCategories = ({
+    categories,
+    minCategories,
+    maxCategories
   }: {
-    categories: {
-      id: string
+      categories: {
+      id: string,
       title: string
     }[]
-  }) {
-    const randomIndex = Math.floor(Math.random() * categories.length)
-    return categories[randomIndex]
+    minCategories: number
+    maxCategories: number
+  }) => {
+
+  // Validate input
+  if (minCategories > maxCategories) {
+    throw new Error('minCategories cannot be greater than maxCategories');
   }
+  // Generate a random number of categories to pick
+  const numCategoriesToPick = Math.floor(Math.random() * (maxCategories - minCategories + 1)) + minCategories;
+
+  // Shuffle the categories array for randomness
+  categories.sort(() => Math.random() - 0.5);
+
+  // Pick the desired number of categories from the shuffled array
+  const selectedCategories = categories.slice(0, numCategoriesToPick);
+
+    return selectedCategories.map((category) => ({ id: category.id }));
+  }
+
+
+
 
   for (let index = 0; index < imagesToSeed.length; index++) {
     const image = imagesToSeed[index]
@@ -72,11 +92,15 @@ async function seed() {
         userId: userId,
         imageUrl: image.imageUrl,
         cloudinaryPublicId: image.cloudinaryPublicId,
-        city: image.city,
+        blurredImageUrl:getCloudinaryBlurUrl(image.imageUrl),
+        city: 'Kanazawa',
         categories: {
-          connect: {
-            id: getRandomCategory({ categories }).id
-          }
+          connect: assignRandomNumberOfCategories({
+            categories,
+            minCategories: 2,
+            maxCategories: 10
+                    })
+
         }
       }
     })

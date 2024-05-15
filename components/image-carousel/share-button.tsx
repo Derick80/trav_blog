@@ -15,8 +15,10 @@ type Props = {
   id: string
 }
 
-export function ShareImageButton({ id }: Props) {
-  const postUrl = `http://localhost.com/photos/${id}`
+export function ShareImageButton ({ id }: Props) {
+  const mode = process.env.NODE_ENV
+
+  const postUrl = `${mode === 'development' ? 'http://localhost:3000' : 'https://travel-blog.fly.dev'}/photos/${id}`
   const encodedPostUrl = encodeURIComponent(postUrl)
 
   const ref = React.useRef<HTMLInputElement | null>(null)

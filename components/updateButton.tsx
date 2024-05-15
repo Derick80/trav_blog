@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { Button } from './ui/button'
-import { Small } from './ui/typography'
+import { Caption, Small } from './ui/typography'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import clsx from 'clsx'
@@ -50,12 +50,15 @@ export const UpdateButton = ({
   }
 
   return (
-    <div className='flex flex-wrap gap-4'>
-      <Link href='/'>
+    <div className='flex flex-wrap gap-1 md:gap-2'>
+      <Link
+        href='/'
+      prefetch={true}
+      >
         <Button
           type='button'
-          variant='ghost'
-          size='icon'
+          variant='outline'
+          size='xs'
           className='relative z-20 mr-4 rounded-full bg-primary/70 p-1 hover:bg-primary/30'
           onClick={handleReset}
         >
@@ -72,12 +75,12 @@ export const UpdateButton = ({
           category.count >= 0 && (
             <Button
               type='button'
-              size='default'
+              size='xs'
               variant='outline'
               key={category.id}
               onClick={() => handleCategoryClick(category.title)}
               className={clsx(
-                'relative z-20 mr-4 rounded-full bg-primary/70 p-1 hover:bg-primary/30',
+                'relative z-20 mr-4 rounded-full bg-primary/70 hover:bg-primary/30',
                 { 'bg-primary/30': activeCategories.includes(category.title) }
               )}
               disabled={
@@ -85,10 +88,12 @@ export const UpdateButton = ({
                 !activeCategories.includes(category.title)
               }
             >
-              <Small>
+              <Caption
+              className='text-primary-foreground'
+              >
                 <span className='mr-1'>{category.title}</span>
-              </Small>
-              <span className='absolute bottom-0 right-0 translate-x-5 translate-y-2 rounded-full bg-white px-2 py-1 text-xs text-primary'>
+              </Caption>
+              <span className='absolute bottom-0 right-0 translate-x-5 translate-y-2 rounded-full bg-primary-foreground px-2 py-1 text-xs text-primary'>
                 {category.count}
               </span>
             </Button>
