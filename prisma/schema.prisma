@@ -30,6 +30,7 @@ model UserImages {
   id                 String   @id @unique @default(uuid())
   cloudinaryPublicId String?  @unique
   imageUrl           String
+  blurredImageUrl    String
   flagged            Boolean? @default(false)
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -60,6 +61,7 @@ model Photos {
   id                 String     @id @unique @default(uuid())
   cloudinaryPublicId String     @unique
   imageUrl           String
+  blurredImageUrl    String
   city               String     @default("Unknown")
   description        String     @default("No description")
   title              String     @default("No title")

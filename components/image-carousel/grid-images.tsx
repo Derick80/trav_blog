@@ -25,6 +25,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 import EditableTextField from '../editable-text'
 import { useUser } from '@clerk/nextjs'
 import { CategoryContainer } from '../category-container'
+import { getCloudinaryBlurUrl } from '@/lib/functions'
 
 const ImageGallerySlider = ({
   allCategories,
@@ -49,6 +50,7 @@ const ImageGallerySlider = ({
   images: {
     id: string
     cloudinaryPublicId: string
+    blurredImageUrl: string
     imageUrl: string
     title: string
     description: string
@@ -146,12 +148,12 @@ const ImageGallerySlider = ({
             >
               <Image
                 placeholder='blur'
-                blurDataURL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg=='
+                blurDataURL={ images[currentIndex].blurredImageUrl }
                 src={images[currentIndex].imageUrl}
                 alt={images[currentIndex].title}
                 // width={ 300 }
                 // height={ 225 }
-
+                priority={true}
                 fill={true}
                 sizes={
                   '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
@@ -186,15 +188,22 @@ const ImageGallerySlider = ({
             {likeCount}
           </span>
 
-          <div className='mt-4 flex items-center gap-1'>
+          <div className='mt-4 flex items-center gap-2'>
             <CompassIcon />
-            <EditableTextField
-              initialValue={images[currentIndex].city}
-              className='w-fit'
-              onUpdate={(value) => {
-                editCity({ id: images[currentIndex].id, city: value })
-              }}
-            />
+            { role === 'admin' ? (
+              <EditableTextField
+                initialValue={ images[currentIndex].city }
+                className='w-fit'
+                onUpdate={ (value) => {
+                  editCity({ id: images[currentIndex].id, city: value })
+                } }
+              />
+            ) : (
+              <Small className='flex h-fit max-h-12 min-h-12 items-center z-20'>
+                { images[currentIndex].title }
+              </Small>
+            ) }
+
           </div>
           <ShareImageButton id={images[currentIndex].id} />
         </div>

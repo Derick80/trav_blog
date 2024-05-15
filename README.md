@@ -32,6 +32,7 @@
   ```blurDataURL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg=='
 
   ```
+- I used KCdodds [github](https://github.com/kentcdodds/kentcdodds.com/blob/c5e26ec85b90a135730db7468b70f592b4cbb6dc/content/blog/building-an-awesome-image-loading-experience.mdx#L256)
 
 ### Image Carousel
 

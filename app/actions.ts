@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import prisma from '../lib/prisma'
 import { auth, currentUser } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
+import { getCloudinaryBlurUrl } from '@/lib/functions'
 
 export async function getAllImages({
   page,
@@ -32,6 +33,7 @@ export async function getAllImages({
     select: {
       id: true,
       cloudinaryPublicId: true,
+      blurredImageUrl: true,
       imageUrl: true,
       title: true,
       description: true,
@@ -81,6 +83,7 @@ export async function getAllImages({
     return {
       id: image.id,
       cloudinaryPublicId: image.cloudinaryPublicId,
+      blurredImageUrl: image.blurredImageUrl,
       imageUrl: image.imageUrl,
       title: image.title,
       description: image.description,
@@ -130,6 +133,7 @@ export const getImageById = async (id: string) => {
     select: {
       id: true,
       cloudinaryPublicId: true,
+      blurredImageUrl: true,
       imageUrl: true,
       title: true,
       description: true,
@@ -336,7 +340,8 @@ export const getInitUser = async () => {
       userImages: {
         create: {
           id: user.id,
-          imageUrl: user.imageUrl ?? ''
+          imageUrl: user.imageUrl ?? '',
+          blurredImageUrl: getCloudinaryBlurUrl(user.imageUrl ?? '')  // Add this line
         }
       }
     },
@@ -369,7 +374,8 @@ export const getAllUsers = async () => {
       userImages: {
         select: {
           id: true,
-          imageUrl: true
+          imageUrl: true,
+          blurredImageUrl: true
         }
       }
     }
@@ -389,7 +395,8 @@ export const getUserData = async (userId: string) => {
       userImages: {
         select: {
           id: true,
-          imageUrl: true
+          imageUrl: true,
+          blurredImageUrl: true
         }
       }
     }

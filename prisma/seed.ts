@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { imagesToSeed } from './image-seed'
-
+import {getCloudinaryBlurUrl} from '../lib/functions'
 const prisma = new PrismaClient()
 
 async function seed() {
@@ -92,7 +92,8 @@ async function seed() {
         userId: userId,
         imageUrl: image.imageUrl,
         cloudinaryPublicId: image.cloudinaryPublicId,
-        city: image.city,
+        blurredImageUrl:getCloudinaryBlurUrl(image.imageUrl),
+        city: 'Kanazawa',
         categories: {
           connect: assignRandomNumberOfCategories({
             categories,

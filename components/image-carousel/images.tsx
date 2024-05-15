@@ -99,3 +99,5 @@ function doubleEncode(s: string) {
 }
 
 export { getImgProps, createImages, getImageBuilder }
+
+// w_100,q_auto,f_webp,e_blur:1000

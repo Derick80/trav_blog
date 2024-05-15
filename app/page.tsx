@@ -1,23 +1,14 @@
 import {
-  getAllCategories,
   getAllImages,
   getCategorySummary,
   getCurrentUser
 } from './actions'
 import React from 'react'
 import ImageGallerySlider from '@/components/image-carousel/grid-images'
-import { H2, Muted, Small } from '@/components/ui/typography'
+import { H2 } from '@/components/ui/typography'
 import { Separator } from '@/components/ui/separator'
 import ImageCarouselFeatures from '@/components/image-carousel/image-slider-about'
-import { Badge } from '@/components/ui/badge'
-import { Filter } from 'lucide-react'
-import FilterByCategory from '@/components/tag-filter'
-import { delay } from '@/components/delay'
-import { Button } from '@/components/ui/button'
-import { Updock } from 'next/font/google'
-import { ResetButton, UpdateButton } from '@/components/updateButton'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { UpdateButton } from '@/components/updateButton'
 
 async function Home({
   searchParams
