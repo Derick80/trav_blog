@@ -1,5 +1,5 @@
-import { SignIn } from '@clerk/nextjs'
+import { getInitUser } from '@/app/actions'
 
-export default function Page() {
-  return <SignIn />
+export default async function Page() {
+  return await getInitUser()
 }
