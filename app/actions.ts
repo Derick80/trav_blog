@@ -9,7 +9,7 @@ import { getCloudinaryBlurUrl } from '@/lib/functions'
 export const getAllImages = cache(async ({
   page, limit, category
 }: {
-  page: number, limit: number, category: string
+  page: number, limit: number, category?: string
 
 }) => {
 
